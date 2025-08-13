@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from "react";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Input } from "@heroui/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Input, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { FaIdCard } from "react-icons/fa6";
 import { IoBagHandleSharp } from "react-icons/io5";
 import { MdOutlinePayments } from "react-icons/md";
@@ -9,11 +9,17 @@ import { SearchIcon } from "@/components/searchIcon";
 import ApiContent from "@/components/apiContent";
 import { IoMdAdd } from "react-icons/io";
 import SellingsTable from "@/components/sellingsTable";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const keys = [{ icon: <FaIdCard />, content: "Customers" }, { icon: <MdOutlinePayments />, content: "Orders" }, { icon: <IoBagHandleSharp />, content: "Products" }];
   const [selectedKeys, setSelectedKeys] = useState(new Set(["Select"]));
   const [value, setValue] = useState("")
+  const router = useRouter();
+
+  function handleRedirect() {
+    router.push(`/register/new${selectedValue.replace(/s$/, "")}`);
+  }
 
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
@@ -38,8 +44,9 @@ export default function Home() {
               variant="flat"
               onSelectionChange={(keys) => {
                 if (keys !== "all") {
+                  const newValue = Array.from(keys).join(", ").replace(/_/g, "").toLowerCase();
                   setSelectedKeys(new Set(keys as Set<string>));
-                  setValue(selectedValue)
+                  setValue(newValue);
                 }
               }}          >
               {keys.map((item) => (
@@ -48,9 +55,21 @@ export default function Home() {
             </DropdownMenu>
           </Dropdown>
         </span>
-        <Button className="px-1 gap-1 w-fit" color="primary" size="lg" endContent={<IoMdAdd size={20} />}>
-          New
-        </Button>
+        <Popover placement="bottom">
+          <PopoverTrigger>
+            <Button className="px-1 gap-1 w-fit" color="primary" size="lg" endContent={<IoMdAdd size={20} />}>
+              New
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <div className="px-1 py-2 flex flex-col gap-2">
+              <div className="text-md font-bold">Register new {selectedValue.replace(/s$/, "")}?</div>
+              <Button className="px-1 mx-auto gap-1 w-fit" size="md" onPress={() => handleRedirect()}>
+                Confirm
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
         <Input
           isClearable
           classNames={{
@@ -67,7 +86,7 @@ export default function Home() {
           startContent={<SearchIcon />}
         />
       </div>
-      <div className="flex gap-2 w-full h-full">
+      <div className="flex gap-2 w-full h-[79dvh]">
         <SellingsTable />
         <ApiContent type={value} />
       </div>

@@ -1,0 +1,59 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Customer {
+  id                Int      @id @default(autoincrement())
+  corporateName     String
+  email             String
+  phone             String
+  ssn               String
+  postcode          String
+  address           String
+  city              String
+  state             String
+  stateRegistration String
+  district          String
+  totalSpent        Decimal?
+
+  orders            Order[]
+}
+
+model Order {
+  id              Int      @id @default(autoincrement())
+  customerId      Int
+  date            DateTime
+  paymentType     String
+  deliveryAddress String
+  total           Decimal
+  observation     String?
+
+  customer        Customer @relation(fields: [customerId], references: [id])
+  items           OrderItems[]
+}
+
+model OrderItems {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Decimal
+  unitPrice Decimal
+  itemTotal Decimal
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  unitPrice   Decimal
+  name        String
+  description String?
+
+  items       OrderItems[]
+}
