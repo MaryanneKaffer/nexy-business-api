@@ -32,7 +32,7 @@ export default function Home() {
         <span>
           <Dropdown className="text-2xl">
             <DropdownTrigger>
-              <Button className="px-6 w-[145px] gap-1" size="lg" endContent={<FaCaretDown size={16} />}>
+              <Button radius="sm" className="px-6 w-[145px] gap-1" size="lg" endContent={<FaCaretDown size={16} />}>
                 {selectedValue}
               </Button>
             </DropdownTrigger>
@@ -57,7 +57,7 @@ export default function Home() {
         </span>
         <Popover placement="bottom">
           <PopoverTrigger>
-            <Button className="px-1 gap-1 w-fit" color="primary" size="lg" endContent={<IoMdAdd size={20} />}>
+            <Button disabled={selectedValue === "Select"} radius="sm" className="px-1 gap-1 w-fit" color="primary" size="lg" endContent={<IoMdAdd size={20} />}>
               New
             </Button>
           </PopoverTrigger>
@@ -81,7 +81,7 @@ export default function Home() {
           }}
           className="w-full"
           placeholder="Type to search..."
-          radius="lg"
+          radius="sm" 
           size="lg"
           startContent={<SearchIcon />}
         />

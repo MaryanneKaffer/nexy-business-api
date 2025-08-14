@@ -7,25 +7,25 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-export default function NewCustomer() {
+export default function NewProduct() {
     const { register, handleSubmit } = useForm();
     const [regsResult, setRegsResult] = useState("")
     const router = useRouter();
 
     async function onSubmit(data: any) {
         try {
-            const res = await fetch("/api/customers", {
+            const res = await fetch("/api/products", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
             if (!res.ok) {
-                throw new Error("Couldn't register customer");
+                throw new Error("Couldn't register product");
             }
 
             const result = await res.json();
-            setRegsResult(data.corporateName)
+            setRegsResult(data.name)
             setTimeout(() => {
                 router.push("/");
             }, 3000);
@@ -37,34 +37,23 @@ export default function NewCustomer() {
     return (
         <>
             <section className="flex flex-col bg-[#0F0F0F] gap-4 w-[40dvw] absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-fit mx-auto p-8 rounded-lg">
-                <h1 className="text-3xl text-center">Register new Customer</h1>
+                <h1 className="text-3xl text-center">Register new Product</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                     <span className="flex gap-2">
-                        <Input size="lg" {...register("corporateName")} label="Corporate name" />
-                        <Input size="lg" {...register("phone")} label="Phone number" />
+                        <Input size="lg" {...register("name")} label="Product name" />
                     </span>
                     <span className="flex gap-2">
-                        <Input size="lg" {...register("email")} label="Email" type="email" />
-                        <Input size="lg" {...register("ssn")} label="Social Security Number" />
+                        <Input size="lg" {...register("size")} label="Size" />
+                        <Input size="lg" {...register("unitPrice")} label="Unit price" />
                     </span>
-                    <span className="flex gap-2">
-                        <Input size="lg" {...register("city")} label="City" />
-                        <Input size="lg" {...register("state")} label="State" />
-                    </span>
-                    <span className="flex gap-2">
-                        <Input size="lg" {...register("district")} label="District" />
-                        <Input size="lg" {...register("stateRegistration")} label="State registration" />
-                    </span>
-                    <span className="flex gap-2">
-                        <Input size="lg" {...register("address")} label="Address" />
-                        <Input size="lg" {...register("postcode")} label="Postcode" />
-                    </span>
+
+                    <Input size="lg" {...register("description")} label="description" />
                     <Button size="lg" type="submit">Register</Button>
                 </form>
             </section>
             {regsResult.includes("error") ? <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="danger" title={regsResult} />
                 :
-                regsResult && <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="success" title={`Customer ${regsResult} successfully registered. Returning...`} />
+                regsResult && <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="success" title={`Product ${regsResult} successfully registered. Returning...`} />
             }
         </>
     )

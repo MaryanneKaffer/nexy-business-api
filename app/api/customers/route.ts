@@ -39,7 +39,6 @@ export async function POST(request: Request) {
 
         return NextResponse.json(customer, { status: 201 });
     } catch (error) {
-        console.error(error);
         return NextResponse.json({ error: "Couldn't register customer" }, { status: 500 });
     }
 }
@@ -52,7 +51,6 @@ export async function GET() {
 
         return NextResponse.json(customers);
     } catch (error) {
-        console.error("Error fetching customers:", error);
         return NextResponse.json({ error: "Failed to fetch customers" }, { status: 500 });
     }
 }

@@ -54,6 +54,7 @@ model Product {
   unitPrice   Decimal
   name        String
   description String?
+  size        String
 
   items       OrderItems[]
 }
