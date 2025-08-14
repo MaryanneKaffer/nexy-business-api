@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export type Order = {
+    id: string;
     customerId: string;
     date: string;
     paymentType: string;
@@ -15,7 +16,7 @@ export type Order = {
         quantity: number;
         unitPrice: number;
         itemTotal: number;
-    }
+    }[]
 }
 
 export async function POST(req: Request) {
@@ -57,6 +58,12 @@ export async function GET() {
     try {
         const orders = await prisma.order.findMany({
             orderBy: { id: "desc" },
+            include: {
+                customer: true,
+                items: {
+                    include: { product: true },
+                },
+            },
         });
 
         return NextResponse.json(orders);
