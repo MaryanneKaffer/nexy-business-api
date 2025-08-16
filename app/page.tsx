@@ -7,9 +7,9 @@ import { MdOutlinePayments } from "react-icons/md";
 import { FaCaretDown } from "react-icons/fa";
 import { SearchIcon } from "@/components/searchIcon";
 import ApiContent from "@/components/apiContent";
-import { IoMdAdd } from "react-icons/io";
 import SellingsTable from "@/components/sellingsTable";
 import { useRouter } from "next/navigation";
+import { ThemeSwitch } from "@/components/theme-switch";
 
 export default function Home() {
   const keys = [{ icon: <FaIdCard />, content: "Customers" }, { icon: <MdOutlinePayments />, content: "Orders" }, { icon: <IoBagHandleSharp />, content: "Products" }];
@@ -29,10 +29,11 @@ export default function Home() {
   return (
     <section className="flex flex-col gap-4 w-full h-full">
       <div className="flex gap-2">
+        <span className="flex items-center"><ThemeSwitch /></span>
         <span>
           <Dropdown className="text-2xl">
             <DropdownTrigger>
-              <Button radius="sm" className="px-6 w-[145px] gap-1" size="lg" endContent={<FaCaretDown size={16} />}>
+              <Button radius="sm" className="px-3 w-[145px] gap-1" size="lg" endContent={<FaCaretDown size={16} />}>
                 {selectedValue}
               </Button>
             </DropdownTrigger>
@@ -57,7 +58,7 @@ export default function Home() {
         </span>
         <Popover placement="bottom">
           <PopoverTrigger>
-            <Button disabled={selectedValue === "Select"} radius="sm" className="px-1 gap-1 w-fit" color="primary" size="lg" endContent={<IoMdAdd size={20} />}>
+            <Button disabled={selectedValue === "Select"} radius="sm" className="gap-1 px-5 min-w-[45px]" color="primary" size="lg">
               New
             </Button>
           </PopoverTrigger>
@@ -77,11 +78,13 @@ export default function Home() {
             inputWrapper: [
               "hover:bg-default-200/70",
               "dark:hover:bg-default/70",
+              "dark:bg-default",
+              "bg-default",
             ],
           }}
           className="w-full"
           placeholder="Type to search..."
-          radius="sm" 
+          radius="sm"
           size="lg"
           startContent={<SearchIcon />}
         />

@@ -27,7 +27,7 @@ model Customer {
 model Order {
   id              Int      @id @default(autoincrement())
   customerId      Int
-  date            DateTime
+  date            String
   paymentType     String
   deliveryAddress String
   total           Decimal

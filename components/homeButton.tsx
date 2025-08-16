@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { Button } from "@heroui/button";
-import { GoHomeFill } from "react-icons/go";
+import { TbArrowBackUp } from "react-icons/tb";
 
 export default function HomeButton() {
     const router = useRouter();
@@ -11,8 +11,8 @@ export default function HomeButton() {
     }
 
     return (
-        <Button className="absolute top-2 left-2 bg-transparent max-w-12" size="lg" onPress={handleRedirect}>
-            <GoHomeFill />
+        <Button className="absolute top-6 left-2 bg-transparent max-w-12" size="lg" onPress={handleRedirect}>
+            <TbArrowBackUp size={40}/>
         </Button>
     );
 }

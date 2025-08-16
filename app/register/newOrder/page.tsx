@@ -43,8 +43,13 @@ export default function NewOrder() {
 
             const orderPayload = {
                 customerId: selectedCustomerId,
-                date: new Date().toISOString(),
-                paymentType: formData.paymentType,
+                date: `${new Date().getFullYear()}-` +
+                    `${(new Date().getMonth() + 1).toString().padStart(2, "0")}-` +
+                    `${new Date().getDate().toString().padStart(2, "0")} ` +
+                    `${new Date().getHours().toString().padStart(2, "0")}:` +
+                    `${new Date().getMinutes().toString().padStart(2, "0")}:` +
+                    `${new Date().getSeconds().toString().padStart(2, "0")}`, 
+                    paymentType: formData.paymentType,
                 deliveryAddress: selectedCustomer?.address ?? "",
                 total: Number(formData.total),
                 observation: formData.observation || null,

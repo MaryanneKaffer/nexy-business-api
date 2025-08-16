@@ -41,7 +41,6 @@ export async function POST(req: Request) {
                 },
             },
             include: {
-                customer: true,
                 items: {
                     include: { product: true },
                 },
@@ -59,7 +58,6 @@ export async function GET() {
         const orders = await prisma.order.findMany({
             orderBy: { id: "desc" },
             include: {
-                customer: true,
                 items: {
                     include: { product: true },
                 },

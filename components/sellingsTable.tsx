@@ -5,12 +5,12 @@ export default function SellingsTable() {
         { name: "Best customers", value: ["Customer 1: $0.00", "Customer 2: $0.00", "Customer 3: $0.00"] }
     ]
     return (
-        <div className="w-[285px] h-full bg-[#27272A] rounded-lg p-5">
+        <div className="w-[295px] h-full dark:bg-[#27272A] bg-[#D4D4D8] rounded-lg p-5">
             {preview.map((item, index) => (
                 <span key={index}>
                     <p className="text-blue-500 text-xl">{item.name}</p>
                     {item.value.map((value) => (
-                        <p key={value} className="text-gray-300 ml-3 text-md my-1">{value}</p>
+                        <p key={value} className="dark:text-gray-300 ml-3 text-md my-1">{value}</p>
                     ))}
                 </span>
             ))}
