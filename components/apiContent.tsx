@@ -6,13 +6,12 @@ import { Order } from "@/app/api/orders/route";
 import { IoPerson } from "react-icons/io5";
 import { CgNotes } from "react-icons/cg";
 import { AiOutlineProduct } from "react-icons/ai";
-import { useRouter } from "next/navigation";
+import ViewButton from "./viewButton";
 
 export default function ApiContent({ type }: { type: string }) {
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
-    const router = useRouter()
 
     useEffect(() => {
         async function fetchData() {
@@ -31,15 +30,6 @@ export default function ApiContent({ type }: { type: string }) {
         fetchData();
     }, []);
 
-    const ViewButton = ({ id }: { id: number }) => {
-        const handleView = () => {
-            router.push(`/view/${type.replace(/s$/, "")}-${id}`)
-        }
-        return (
-            <Button className="ml-auto w-[140px] group-hover:opacity-100 opacity-0 transition-all duration-200" radius="sm" onPress={() => handleView()}>View</Button>
-        )
-    }
-
     return (
         <div className="w-full h-full overflow-y-scroll scroll-hidden dark:bg-[#27272A] bg-[#D4D4D8] rounded-sm p-6">
             <div className="flex flex-col gap-2">
@@ -55,7 +45,7 @@ export default function ApiContent({ type }: { type: string }) {
                                 </span>
                                 <span className="flex flex-col ml-auto text-md leading-tight">
                                     <p className="text-xl text-gray-400 text-center">Orders: {orders.filter(o => Number(o.customerId) === item.id)?.length ?? 0}</p>
-                                    <ViewButton id={item.id} />
+                                    <ViewButton id={item.id} type={type} />
                                 </span>
                             </div>
                         </CardBody>
@@ -73,7 +63,7 @@ export default function ApiContent({ type }: { type: string }) {
                                 </span>
                                 <span className="flex flex-col ml-auto text-md leading-tight">
                                     <p className="text-xl text-gray-400 text-center">Unit price: {Number(item.unitPrice).toFixed(2)}</p>
-                                    <ViewButton id={item.id} />
+                                    <ViewButton id={item.id} type={type} />
                                 </span>
                             </div>
                         </CardBody>
@@ -91,7 +81,7 @@ export default function ApiContent({ type }: { type: string }) {
                                 </span>
                                 <span className="flex flex-col ml-auto text-md leading-tight">
                                     <p className="text-lg">Total: ${Number(item.total).toFixed(2)}</p>
-                                    <ViewButton id={Number(item.id)} />
+                                    <ViewButton id={Number(item.id)} type={type} />
                                 </span>
                             </div>
                         </CardBody>

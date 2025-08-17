@@ -31,11 +31,29 @@ export default function ViewPage() {
     function handleRedirect() {
         router.push(`/edit/${type}/${data?.id}`);
     }
-    console.log(data)
 
+    const handleDelete = async () => {
+        try {
+            const res = await fetch(`/api/${type}s/${id}`, {
+                method: "DELETE",
+            });
+
+            if (!res.ok) {
+                const error = await res.json();
+                alert(`Erro: ${error.error}`);
+                return;
+            }
+
+            setDeleted((data as Customer).corporateName)
+            router.refresh();
+        } catch (err) {
+            console.error(err);
+            alert("Erro ao tentar deletar cliente.");
+        }
+    };
 
     return (
-        <div className="p-8 mx-auto w-[45%] bg-[#0F0F0F] gap-3 rounded-sm">
+        <div className="p-8 mx-auto w-[45%] dark:bg-[#27272A] bg-[#D4D4D8] gap-3 rounded-sm">
             {data && (
                 <>
                     <h1 className="text-2xl font-bold text-center mb-8">{type === "customer"
@@ -79,8 +97,8 @@ export default function ViewPage() {
                         ))}
                     </div>
                     {type !== "order" && <span className="flex gap-3 w-full mt-8">
-                        <Button radius="sm" className="w-full" onPress={handleRedirect}>Edit</Button>
-                        <Button radius="sm" color="danger" className="w-full">Delete</Button>
+                        <Button radius="sm" color="primary" className="w-full" onPress={handleRedirect}>Edit</Button>
+                        <Button radius="sm" color="danger" className="w-full" onPress={handleDelete}>Delete</Button>
                     </span>}
                 </>
             )}

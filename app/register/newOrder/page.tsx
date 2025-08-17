@@ -48,8 +48,8 @@ export default function NewOrder() {
                     `${new Date().getDate().toString().padStart(2, "0")} ` +
                     `${new Date().getHours().toString().padStart(2, "0")}:` +
                     `${new Date().getMinutes().toString().padStart(2, "0")}:` +
-                    `${new Date().getSeconds().toString().padStart(2, "0")}`, 
-                    paymentType: formData.paymentType,
+                    `${new Date().getSeconds().toString().padStart(2, "0")}`,
+                paymentType: formData.paymentType,
                 deliveryAddress: selectedCustomer?.address ?? "",
                 total: Number(formData.total),
                 observation: formData.observation || null,
@@ -64,7 +64,14 @@ export default function NewOrder() {
 
             if (!res.ok) throw new Error("Couldn't register order");
 
-            const result = await res.json();
+            const updateRes = await fetch(`/api/customers/${selectedCustomerId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ totalSpent: (selectedCustomer?.totalSpent ?? 0) + formData.total }),
+            });
+
+            if (!updateRes.ok) throw new Error("Couldn't update customer's totalSpent");
+
             setRegsResult(selectedCustomer?.corporateName || "");
             setTimeout(() => router.push("/"), 3000);
         } catch (error) {

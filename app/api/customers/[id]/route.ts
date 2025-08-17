@@ -41,3 +41,15 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     return NextResponse.json(customer);
 }
+
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+    try {
+        const customer = await prisma.customer.delete({
+            where: { id: Number(params.id) },
+        });
+
+        return NextResponse.json({ message: "Customer deleted successfully", customer });
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to delete customer" }, { status: 500 });
+    }
+}
