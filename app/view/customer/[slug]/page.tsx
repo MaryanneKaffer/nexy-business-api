@@ -116,7 +116,7 @@ export default function ViewCustomer() {
                                     key={key}
                                     label={key.toUpperCase()}
                                     value={String(value)}
-                                    isDisabled
+                                    readOnly
                                     radius="sm"
                                 />
                             ))}
@@ -125,7 +125,7 @@ export default function ViewCustomer() {
                             className="mt-3"
                             label="TOTAL SPENT"
                             value={`$${String(Number(data.totalSpent ?? 0).toFixed(2))}`}
-                            isDisabled
+                            readOnly
                             radius="sm"
                         />
                         <span className="flex gap-3 w-full mt-auto">
