@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Input, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { FaIdCard } from "react-icons/fa6";
 import { IoBagHandleSharp } from "react-icons/io5";
@@ -10,12 +10,38 @@ import ApiContent from "@/components/apiContent";
 import SellingsTable from "@/components/sellingsTable";
 import { useRouter } from "next/navigation";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { Customer } from "./api/customers/route";
+import { Product } from "./api/products/route";
+import { Order } from "./api/orders/route";
 
 export default function Home() {
   const keys = [{ icon: <FaIdCard />, content: "Customers" }, { icon: <MdOutlinePayments />, content: "Orders" }, { icon: <IoBagHandleSharp />, content: "Products" }];
   const [selectedKeys, setSelectedKeys] = useState(new Set(["Select"]));
   const [value, setValue] = useState("")
+  const [filter, setFilter] = useState("")
   const router = useRouter();
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const [resC, resP, resO] = await Promise.all([
+        fetch("/api/customers"),
+        fetch("/api/products"),
+        fetch("/api/orders")
+      ]);
+      const [dataC, dataP, dataO] = await Promise.all([
+        resC.json(),
+        resP.json(),
+        resO.json()
+      ])
+      setCustomers(dataC)
+      setProducts(dataP)
+      setOrders(dataO)
+    }
+    fetchData();
+  }, []);
 
   function handleRedirect() {
     router.push(`/register/new${selectedValue.replace(/s$/, "")}${selectedValue === "Orders" && "/default"}`);
@@ -33,7 +59,7 @@ export default function Home() {
         <span>
           <Dropdown className="text-2xl">
             <DropdownTrigger>
-              <Button radius="sm" className="px-3 w-[145px] gap-1" size="lg" endContent={<FaCaretDown size={16} />}>
+              <Button radius="sm" className="px-3 w-[145px] gap-1 bg-[#27272A]" size="lg" endContent={<FaCaretDown size={16} />}>
                 {selectedValue}
               </Button>
             </DropdownTrigger>
@@ -77,8 +103,8 @@ export default function Home() {
             label: "text-black/50 dark:text-white/90",
             inputWrapper: [
               "hover:bg-default-200/70",
-              "dark:hover:bg-default/70",
-              "dark:bg-default",
+              "dark:hover:bg-default",
+              "dark:bg-default-200/70",
               "bg-default",
             ],
           }}
@@ -86,12 +112,13 @@ export default function Home() {
           placeholder="Type to search..."
           radius="sm"
           size="lg"
+          onChange={(e) => setFilter(e.target.value)}
           startContent={<SearchIcon />}
         />
       </div>
       <div className="flex gap-2 w-full h-[79dvh]">
         <SellingsTable />
-        <ApiContent type={value} />
+        <ApiContent type={value} filter={filter} orders={orders} products={products} customers={customers} />
       </div>
     </section >
   );

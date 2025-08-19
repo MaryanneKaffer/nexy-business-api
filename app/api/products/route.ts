@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
 export type Product = {
     id: number;
-    unitPrice: number;
+    unitPrice: number | Decimal;
     name: string;
-    description: string;
+    description: string | null;
     size: number;
 };
 
@@ -32,11 +33,11 @@ export async function POST(request: Request) {
 
 export async function GET() {
     try {
-        const customers = await prisma.product.findMany({
+        const products = await prisma.product.findMany({
             orderBy: { id: "desc" },
         });
 
-        return NextResponse.json(customers);
+        return NextResponse.json(products);
     } catch (error) {
         return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
     }

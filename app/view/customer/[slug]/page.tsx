@@ -2,15 +2,13 @@
 import { Customer } from "@/app/api/customers/route";
 import { Order } from "@/app/api/orders/route";
 import { Product } from "@/app/api/products/route";
-import ViewButton from "@/components/viewButton";
+import { Cards } from "@/components/cards";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-import { Alert, Card, CardBody, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
+import { Alert,  Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { useEffect, useState } from "react";
-import { AiOutlineProduct } from "react-icons/ai";
-import { CgNotes } from "react-icons/cg";
 
 interface ProductTotals {
     [productId: number]: { quantity: number; total: number };
@@ -28,16 +26,20 @@ export default function ViewCustomer() {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await fetch(`/api/customers/${id}`);
-            const resO = await fetch(`/api/orders`);
-            const resP = await fetch(`/api/products`);
+            const [resC, resO, resP] = await Promise.all([
+                fetch(`/api/customers/${id}`),
+                fetch(`/api/orders`),
+                fetch(`/api/products`),
+            ]);
 
-            const productsData = await resP.json();
-            const ordersData = await resO.json();
-            const data = await res.json();
+            const [customer, ordersData, productsData] = await Promise.all([
+                resC.json(),
+                resO.json(),
+                resP.json(),
+            ]);
 
             const customerOrders = ordersData.filter(
-                (order: Order) => order.customerId === data.id
+                (order: Order) => order.customerId === customer.id
             );
 
             const allItems = customerOrders.flatMap((order: Order) => order.items);
@@ -74,7 +76,7 @@ export default function ViewCustomer() {
 
             setProducts(customerProductsWithTotal);
             setOrders(customerOrders);
-            setData(data)
+            setData(customer)
             setProductTotal(totals);
         }
         fetchData();
@@ -156,22 +158,7 @@ export default function ViewCustomer() {
                     </span>
                     <div className="flex flex-col gap-3">
                         {orders && orders.map((item) => (
-                            <Card key={item.id} className="h-[114px] p-3 hover:scale-[1.02] group" radius="sm">
-                                <CardBody>
-                                    <div className="flex gap-3 h-full">
-                                        <CgNotes size={60} className="my-auto" />
-                                        <span className="flex flex-col text-md leading-tight">
-                                            <p className="text-gray-400">Date: {item.date}</p>
-                                            <p className="text-gray-400">Products: {item.items.length}</p>
-                                            <p className="text-gray-400">Id: {item.id}</p>
-                                        </span>
-                                        <span className="flex flex-col ml-auto text-md leading-tight">
-                                            <p className="text-xl">Total: ${Number(item.total).toFixed(2)}</p>
-                                            <ViewButton id={Number(item.id)} type={"order"} />
-                                        </span>
-                                    </div>
-                                </CardBody>
-                            </Card>
+                            <Cards key={item.id} title={item.date} id={item.id} content1={`Products: ${item.items.length}`} rightContent1={`Total: ${Number(item.total).toFixed(2)}`} type="order" />
                         ))}
                     </div>
                 </div>
@@ -182,23 +169,8 @@ export default function ViewCustomer() {
                     </span>
                     <div className="flex flex-col gap-3">
                         {products && products.map((item) => (
-                            <Card key={item.id} className="h-[114px] p-3 hover:scale-[1.02] group" radius="sm">
-                                <CardBody>
-                                    <div className="flex gap-3 h-full">
-                                        <AiOutlineProduct size={60} className="my-auto" />
-                                        <span className="flex flex-col text-md leading-tight">
-                                            <p className="text-xl">{item.name} <span className="text-gray-400 !text-sm">id: {item.id} | included in {orders.filter((order: Order) => order.items.some(i => Number(i.productId) === item.id)).length} orders</span></p>
-                                            <p className="text-gray-400">Description: {item.description}</p>
-                                            <p className="text-gray-400">Size: {item.size}</p>
-                                        </span>
-                                        <span className="flex flex-col ml-auto text-md leading-tight">
-                                            <p className="text-xl text-right">Total: ${productTotal[item.id].total.toFixed(2)}</p>
-                                            <p className="text-xl text-gray-400 text-right transition-all group-hover:h-0 h-2 group-hover:opacity-0 opacity-100 transition-500">Quantity: {productTotal[item.id].quantity}</p>
-                                            <ViewButton id={item.id} type={"product"} />
-                                        </span>
-                                    </div>
-                                </CardBody>
-                            </Card>
+                            <Cards title={item.name} id={`${item.id} | included in ${orders.filter((order: Order) => order.items.some(i => Number(i.productId) === item.id)).length} orders`} content1={item.description ?? ""}
+                            content2={String(item.size)} rightContent1={`Total: ${productTotal[item.id].total.toFixed(2)}`} rightContent2={`Quantity: ${productTotal[item.id].quantity}`} type="product" />
                         ))}
                     </div>
                 </div>

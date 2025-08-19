@@ -1,91 +1,22 @@
-import { Button, Card, CardBody } from "@heroui/react";
-import { useState, useEffect } from "react";
 import { Customer } from "@/app/api/customers/route";
 import { Product } from "@/app/api/products/route";
 import { Order } from "@/app/api/orders/route";
-import { IoPerson } from "react-icons/io5";
-import { CgNotes } from "react-icons/cg";
-import { AiOutlineProduct } from "react-icons/ai";
-import ViewButton from "./viewButton";
+import { Cards } from "./cards";
 
-export default function ApiContent({ type }: { type: string }) {
-    const [customers, setCustomers] = useState<Customer[]>([]);
-    const [products, setProducts] = useState<Product[]>([]);
-    const [orders, setOrders] = useState<Order[]>([]);
-
-    useEffect(() => {
-        async function fetchData() {
-            const resC = await fetch("/api/customers");
-            const resP = await fetch("/api/products");
-            const resO = await fetch("/api/orders");
-
-            const dataC = await resC.json();
-            const dataP = await resP.json();
-            const dataO = await resO.json();
-
-            setCustomers(dataC)
-            setProducts(dataP)
-            setOrders(dataO)
-        }
-        fetchData();
-    }, []);
-
+export default function ApiContent({ type, filter, orders, products, customers }: { type: string, filter: string, orders: Order[], products: Product[], customers: Customer[] }) {
     return (
         <div className="w-full h-full overflow-y-scroll scroll-hidden dark:bg-[#27272A] bg-[#D4D4D8] rounded-sm p-6">
             <div className="flex flex-col gap-2">
-                {type === "customers" && customers.map((item, index) => (
-                    <Card key={index} className="h-[114px] p-3 group hover:scale-102" radius="sm">
-                        <CardBody >
-                            <div className="flex gap-3 h-full">
-                                <IoPerson size={60} className="my-auto" />
-                                <span className="flex flex-col text-md leading-tight">
-                                    <p className="text-xl">{item.corporateName}</p>
-                                    <p className="text-gray-400">{item.email}</p>
-                                    <p className="text-gray-400">Id: {item.id}</p>
-                                </span>
-                                <span className="flex flex-col ml-auto text-md leading-tight">
-                                    <p className="text-xl text-gray-400 text-center">Orders: {orders.filter(o => Number(o.customerId) === item.id)?.length ?? 0}</p>
-                                    <ViewButton id={item.id} type={type} />
-                                </span>
-                            </div>
-                        </CardBody>
-                    </Card>
+                {type === "customers" && (filter ? customers.filter((c: Customer) => (c.corporateName.includes(filter))) : customers).map((item) => (
+                    <Cards key={item.id} title={item.corporateName} id={String(item.id)} content1={item.email} content2={item.ssn}
+                        rightContent1={`Orders: ${orders.filter(o => Number(o.customerId) === item.id)?.length ?? 0}`} type="customer" />
                 ))}
-                {type === "products" && products.map((item, index) => (
-                    <Card key={index} className="h-[114px] p-3 hover:scale-102 group" radius="sm">
-                        <CardBody>
-                            <div className="flex gap-3 h-full">
-                                <AiOutlineProduct size={60} className="my-auto" />
-                                <span className="flex flex-col text-md leading-tight">
-                                    <p className="text-xl">{item.name} <span className="text-gray-400 !text-sm">id: {item.id}</span></p>
-                                    <p className="text-gray-400">Description: {item.description}</p>
-                                    <p className="text-gray-400">Size: {item.size}</p>
-                                </span>
-                                <span className="flex flex-col ml-auto text-md leading-tight">
-                                    <p className="text-xl text-gray-400 text-center">Unit price: {Number(item.unitPrice).toFixed(2)}</p>
-                                    <ViewButton id={item.id} type={type} />
-                                </span>
-                            </div>
-                        </CardBody>
-                    </Card>
+                {type === "products" && (filter ? products.filter((p: Product) => (p.name.includes(filter))) : products).map((item) => (
+                    <Cards key={item.id} title={item.name} id={String(item.id)} content1={item.description ?? ""} content2={String(item.size)} rightContent1={`Unit price: ${Number(item.unitPrice).toFixed(2)}`} type="product" />
                 ))}
-                {type === "orders" && orders.map((item, index) => (
-                    <Card key={index} className="h-[114px] p-3 hover:scale-102 group" radius="sm">
-                        <CardBody>
-                            <div className="flex gap-3 h-full">
-                                <CgNotes size={60} className="my-auto" />
-                                <span className="flex flex-col text-md leading-tight">
-                                    <p className="text-xl">Order from {customers.find(c => c.id === Number(item.customerId))?.corporateName ?? "Unknown customer"}</p>
-                                    <p className="text-gray-400">Products: {item.items.length}</p>
-                                    <p className="text-gray-400">Id: {item.id}</p>
-                                </span>
-                                <span className="flex flex-col ml-auto text-md leading-tight">
-                                    <p className="text-lg">Total: ${Number(item.total).toFixed(2)}</p>
-                                    <ViewButton id={Number(item.id)} type={type} />
-                                </span>
-                            </div>
-                        </CardBody>
-                    </Card>
+                {type === "orders" && (filter ? orders.filter((o: Order) => ((customers.find(c => String(c.id) === o.customerId)?.corporateName) || String(o.id)).includes(filter)) : orders).map((item, index) => (
+                    <Cards key={index} title={`Order from ${customers.find(c => c.id === Number(item.customerId))?.corporateName}`} id={item.id} content1={`Products: ${item.items.length}`}
+                        content2={item.observation} rightContent1={`Total: ${Number(item.total).toFixed(2)}`} type="order" />
                 ))}
             </div>
         </div>

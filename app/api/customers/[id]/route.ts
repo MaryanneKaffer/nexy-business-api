@@ -4,9 +4,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
+    const { id } = await params;
+
     try {
         const customer = await prisma.customer.findUnique({
-            where: { id: Number(params.id) },
+            where: { id: Number(id) },
         });
 
         if (!customer) {
