@@ -5,9 +5,9 @@ import { Product } from "@/app/api/products/route";
 import ViewButton from "@/components/viewButton";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-import { Card, CardBody } from "@heroui/react";
+import { Card, CardBody, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { OrderItems } from "@prisma/client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { useEffect, useState } from "react";
 import { AiOutlineProduct } from "react-icons/ai";
@@ -19,6 +19,7 @@ export default function ViewPage() {
     const [data, setData] = useState<Order>();
     const [customer, setCustomer] = useState<Customer>();
     const [products, setProducts] = useState<Product[]>([])
+    const router = useRouter();
 
     useEffect(() => {
         async function fetchData() {
@@ -35,6 +36,8 @@ export default function ViewPage() {
         }
         fetchData();
     }, [id]);
+
+    const handleCopy = () => router.push(`/register/newOrder/${data?.id}`);
 
     return (
         <section className="flex gap-2">
@@ -82,10 +85,21 @@ export default function ViewPage() {
                             </Card>
                         )}
                         <span className="flex gap-3 w-full mt-auto">
-                            <Button radius="sm" color="primary" className="w-full" >Copy</Button>
+                            <Popover>
+                                <PopoverTrigger>
+                                    <Button radius="sm" color="primary" className="w-full">Copy</Button>
+                                </PopoverTrigger>
+                                <PopoverContent>
+                                    <div className="px-1 py-2 flex flex-col">
+                                        <p className="text-lg font-bold mb-2">Do you want to create a new order with these informations?</p>
+                                        <Button className="px-1 mx-auto gap-1 w-fit mt-2" color="primary" size="md" onPress={handleCopy}>
+                                            Proceed
+                                        </Button>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                         </span>
                     </div>
-
                 )}
             </div>
             <div className="p-8 mx-auto w-[60%] h-[86dvh] dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm flex flex-col">

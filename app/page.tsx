@@ -18,7 +18,7 @@ export default function Home() {
   const router = useRouter();
 
   function handleRedirect() {
-    router.push(`/register/new${selectedValue.replace(/s$/, "")}`);
+    router.push(`/register/new${selectedValue.replace(/s$/, "")}${selectedValue === "Orders" && "/default"}`);
   }
 
   const selectedValue = React.useMemo(

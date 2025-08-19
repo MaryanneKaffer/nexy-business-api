@@ -1,14 +1,16 @@
 "use client"
+import { Order } from "@/app/api/orders/route";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Alert, Autocomplete, AutocompleteItem } from "@heroui/react";
 import { Customer, Product } from "@prisma/client";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm, FieldErrors } from "react-hook-form";
 
 export default function NewOrder() {
-    const { control, handleSubmit, setValue } = useForm();
+    const params = useParams();
+    const { control, handleSubmit, setValue, reset } = useForm();
     const [regsResult, setRegsResult] = useState("")
     const router = useRouter();
     const [customers, setCustomers] = useState<Customer[]>([]);
@@ -18,6 +20,8 @@ export default function NewOrder() {
     const [errorMessage, setErrorMessage] = useState("");
     const [quantity, setQuantity] = useState<number[]>([0, 0, 0, 0, 0, 0, 0, 0]);
     const [itemTotal, setItemTotal] = useState<number[]>([]);
+    const copyId = (params.slug as string) === "default" ? "" : (params.slug as string);
+    const [copied, setCopied] = useState<Order>()
 
     useEffect(() => {
         async function fetchData() {
@@ -25,6 +29,11 @@ export default function NewOrder() {
             const res2 = await fetch(`/api/products`);
             const data = await res.json();
             const data2 = await res2.json();
+            if (copyId !== "") {
+                const resCopy = await fetch(`/api/orders/${copyId}`);
+                const dataCopy = await resCopy.json();
+                setCopied(dataCopy)
+            }
             setCustomers(data)
             setProducts(data2)
         }
@@ -118,8 +127,41 @@ export default function NewOrder() {
 
     useEffect(() => {
         const orderTotal = itemTotal.reduce((acc, val) => acc + (val || 0), 0);
-        setValue("total", orderTotal.toFixed(2));
+        setValue("total", orderTotal);
     }, [itemTotal, setValue]);
+
+    useEffect(() => {
+        if (copied && Array.isArray(copied.items)) {
+            const defaultValues: any = {
+                customerId: copied.customerId,
+                deliveryAddress: copied.deliveryAddress,
+                observation: copied.observation,
+                total: copied.total,
+                paymentType: copied.paymentType,
+            };
+
+            copied.items.forEach((item, index) => {
+                defaultValues[`products.${index}.productId`] = item.productId;
+                defaultValues[`quantity_${index}`] = item.quantity;
+                defaultValues[`itemTotal_${index}`] = item.itemTotal;
+            });
+
+            reset(defaultValues);
+
+            setSelectedCustomerId(Number(copied.customerId));
+            setSelectedProducts(prev => {
+                const newArr = [...prev];
+                copied.items.forEach((item, index) => {
+                    const product = products.find(p => p.id === Number(item.productId)) || null;
+                    newArr[index] = product;
+                });
+                return newArr;
+            });
+            setQuantity(copied.items.map(i => i.quantity));
+            setItemTotal(copied.items.map(i => i.itemTotal));
+        }
+    }, [copied, products, reset]);
+
 
     return (
         <>
@@ -131,10 +173,16 @@ export default function NewOrder() {
                             <Autocomplete
                                 {...field}
                                 radius="sm"
+                                selectedKey={field.value ? String(field.value) : null}
                                 defaultItems={customers}
                                 label="Customer"
                                 placeholder="Search a customer"
-                                onSelectionChange={(key) => setSelectedCustomerId(Number(key))}
+                                onSelectionChange={(key) => {
+                                    const id = key ? Number(key) : undefined;
+                                    field.onChange(id);
+                                    field.onBlur();
+                                    setSelectedCustomerId(id);
+                                }}
                             >
                                 {customers.map((item) => <AutocompleteItem key={item.id}>{item.corporateName}</AutocompleteItem>)}
                             </Autocomplete>
@@ -161,7 +209,7 @@ export default function NewOrder() {
                                 )} />
                                 <span className="flex gap-2">
                                     <Controller name="total" control={control} rules={{ required: " total" }} render={({ field }) => (
-                                        <Input radius="sm" {...field} label="TOTAL" readOnly value={field.value || "0.00"} />
+                                        <Input radius="sm" {...field} label="TOTAL" readOnly value={field.value ? Number(field.value).toFixed(2) : "0.00"} />
                                     )} />
                                     <Controller name="paymentType" control={control} rules={{ required: " payment type" }} render={({ field }) => (
                                         <Input radius="sm" {...field} label="PAYMENT TYPE" />
@@ -206,7 +254,7 @@ export default function NewOrder() {
                                     )} />}
                                 </span>
                                 {product && <Controller name={`itemTotal_${index}`} control={control} rules={{ required: ` product ${index} total` }} render={({ field }) => (
-                                    <Input radius="sm" {...field} label="TOTAL" readOnly value={field.value || "0.00"} />
+                                    <Input radius="sm" {...field} label="TOTAL" readOnly value={field.value ? Number(field.value).toFixed(2) : "0.00"} />
                                 )} />}
                             </div>
                         ))}
