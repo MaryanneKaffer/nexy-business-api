@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { Order } from "../orders/route";
 
 const prisma = new PrismaClient();
 
@@ -16,7 +17,32 @@ export type Customer = {
     district: string;
     address: string;
     totalSpent?: number;
+    orders: Order[];
 };
+
+async function ensureDeletedCustomer() {
+    const exists = await prisma.customer.findUnique({ where: { id: 0 } });
+    if (!exists) {
+        await prisma.customer.create({
+            data: {
+                id: 0,
+                corporateName: "Deleted Customer",
+                email: "",
+                phone: "",
+                ssn: "",
+                postcode: "",
+                address: "",
+                city: "",
+                state: "",
+                stateRegistration: "",
+                district: "",
+                totalSpent: 0
+            }
+        });
+    }
+}
+
+ensureDeletedCustomer();
 
 export async function POST(request: Request) {
     try {
@@ -46,6 +72,7 @@ export async function POST(request: Request) {
 export async function GET() {
     try {
         const customers = await prisma.customer.findMany({
+            where: { id: { not: 0 } },
             orderBy: { id: "desc" },
         });
 

@@ -9,8 +9,25 @@ export type Product = {
     unitPrice: number | Decimal;
     name: string;
     description: string | null;
-    size: number;
+    size: string | number | null
 };
+
+async function ensureDeletedProduct() {
+    const exists = await prisma.product.findUnique({ where: { id: 0 } });
+    if (!exists) {
+        await prisma.product.create({
+            data: {
+                id: 0,
+                unitPrice: 0.00,
+                name: "Deleted product",
+                description: "",
+                size: "",
+            }
+        });
+    }
+}
+
+ensureDeletedProduct();
 
 export async function POST(request: Request) {
     try {
@@ -34,6 +51,7 @@ export async function POST(request: Request) {
 export async function GET() {
     try {
         const products = await prisma.product.findMany({
+            where: { id: { not: 0 } },
             orderBy: { id: "desc" },
         });
 

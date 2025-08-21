@@ -26,7 +26,6 @@ export default function NewCustomer() {
                 throw new Error("Couldn't register customer");
             }
 
-            const result = await res.json();
             setRegsResult(data.corporateName)
             setTimeout(() => {
                 router.push("/");
@@ -43,7 +42,8 @@ export default function NewCustomer() {
 
     return (
         <>
-            <section className="flex flex-col bg-[#0F0F0F] gap-4 w-[40dvw] absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-fit mx-auto p-8 rounded-sm">
+            <section className="flex flex-col dark:bg-[#18181B] bg-[#D4D4D8] gap-4 w-[40dvw] absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-fit mx-auto p-8 rounded-sm">
+                <HomeButton />
                 <h1 className="text-3xl text-center mb-2">Register new Customer</h1>
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4">
                     <span className="flex gap-2">
@@ -86,7 +86,7 @@ export default function NewCustomer() {
                             <Input size="lg" {...field} label="Postcode" radius="sm" />
                         )} />
                     </span>
-                    <Button size="lg" type="submit" radius="sm">Register</Button>
+                    <Button size="lg" type="submit" radius="sm" color="primary">Register</Button>
                 </form>
             </section>
             {errorMessage && <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="danger" title={errorMessage} />}

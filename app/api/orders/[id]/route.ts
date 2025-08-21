@@ -11,6 +11,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
                 items: {
                     include: { product: true },
                 },
+                customer: true,
             },
         });
 

@@ -34,3 +34,23 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     return NextResponse.json(product);
 }
+
+export async function DELETE(req: Request, context: { params: { id: string } }) {
+    const { id } = context.params;
+
+    try {
+        await prisma.orderItems.updateMany({
+            where: { productId: Number(id) },
+            data: { productId: 0 },
+        });
+
+        const customer = await prisma.product.delete({
+            where: { id: Number(id) },
+        });
+
+        return NextResponse.json({ message: "Product deleted and orders reassigned", customer });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
+    }
+}

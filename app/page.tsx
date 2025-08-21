@@ -44,7 +44,7 @@ export default function Home() {
   }, []);
 
   function handleRedirect() {
-    router.push(`/register/new${selectedValue.replace(/s$/, "")}${selectedValue === "Orders" && "/default"}`);
+    router.push(`/register/new${selectedValue.replace(/s$/, "")}${selectedValue === "Orders" ? "/default" : ""}`);
   }
 
   const selectedValue = React.useMemo(
@@ -59,7 +59,7 @@ export default function Home() {
         <span>
           <Dropdown className="text-2xl">
             <DropdownTrigger>
-              <Button radius="sm" className="px-3 w-[145px] gap-1 bg-[#27272A]" size="lg" endContent={<FaCaretDown size={16} />}>
+              <Button radius="sm" className="px-3 w-[145px] gap-1 dark:bg-[#27272A]" size="lg" endContent={<FaCaretDown size={16} />}>
                 {selectedValue}
               </Button>
             </DropdownTrigger>
@@ -117,7 +117,7 @@ export default function Home() {
         />
       </div>
       <div className="flex gap-2 w-full h-[79dvh]">
-        <SellingsTable />
+        <SellingsTable orders={orders} products={products} customers={customers} />
         <ApiContent type={value} filter={filter} orders={orders} products={products} customers={customers} />
       </div>
     </section >

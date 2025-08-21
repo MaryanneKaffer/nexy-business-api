@@ -41,7 +41,7 @@ export default function EditProduct() {
 
     return (
         <>
-            <section className="flex flex-col bg-[#0F0F0F] gap-4 w-[40dvw] absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-fit mx-auto p-8 rounded-sm">
+            <section className="flex flex-col dark:bg-[#18181B] bg-[#D4D4D8] gap-4 w-[40dvw] absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-fit mx-auto p-8 rounded-sm">
                 <HomeButton />
                 <h1 className="text-3xl text-center mb-2">Edit customer</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -57,9 +57,9 @@ export default function EditProduct() {
                         )} />
                     </span>
                     <Controller name="description" control={control} render={({ field }) => (
-                        <Input {...field} size="lg" label="Description" radius="sm" />
+                        <Input {...field} size="lg" label="Description" radius="sm" value={field.value ?? ""} />
                     )} />
-                    <Button size="lg" type="submit" radius="sm">Save</Button>
+                    <Button size="lg" type="submit" radius="sm" color="primary">Save</Button>
                 </form>
             </section>
 

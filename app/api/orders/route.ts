@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { Customer } from "../customers/route";
+import { Product } from "../products/route";
 
 const prisma = new PrismaClient();
 
@@ -16,7 +18,9 @@ export type Order = {
         quantity: number;
         unitPrice: number;
         itemTotal: number;
+        product: Product;
     }[]
+    customer: Customer;
 }
 
 export async function POST(req: Request) {

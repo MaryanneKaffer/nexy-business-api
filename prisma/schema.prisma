@@ -10,7 +10,7 @@ generator client {
 model Customer {
   id                Int      @id @default(autoincrement())
   corporateName     String
-  email             String
+  email             String   @unique
   phone             String
   ssn               String
   postcode          String

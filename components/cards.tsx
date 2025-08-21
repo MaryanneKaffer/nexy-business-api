@@ -20,7 +20,7 @@ export function Cards({ title, id, content1, content2, rightContent1, rightConte
                     </span>
                     <span className="flex flex-col ml-auto text-md leading-tight">
                         <p className="text-xl text-right">{rightContent1}</p>
-                        {rightContent2 && <p className="text-xl text-right">{rightContent2}</p>}
+                        {rightContent2 &&  <p className="text-xl text-gray-400 text-right transition-all group-hover:h-0 h-2 group-hover:opacity-0 opacity-100 transition-500">{rightContent2}</p>}
                         <ViewButton id={Number(id)} type={type} />
                     </span>
                 </div>

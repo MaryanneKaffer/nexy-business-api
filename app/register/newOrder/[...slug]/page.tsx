@@ -86,7 +86,7 @@ export default function NewOrder() {
             setRegsResult(selectedCustomer?.corporateName || "");
             setTimeout(() => router.push("/"), 3000);
         } catch (error) {
-            setRegsResult(`error: ${error}`);
+            setRegsResult(`${error}`);
         }
     }
 
@@ -135,7 +135,7 @@ export default function NewOrder() {
             const defaultValues: any = {
                 customerId: copied.customerId,
                 deliveryAddress: copied.deliveryAddress,
-                observation: copied.observation,
+                observation: copied.observation ?? "",
                 total: copied.total,
                 paymentType: copied.paymentType,
             };
@@ -204,7 +204,7 @@ export default function NewOrder() {
                                 <Controller name="deliveryAddress" control={control} rules={{ required: " delivery address" }} render={({ field }) => (
                                     <Input radius="sm" className="mt-auto" {...field} label="DELIVERY ADDRESS" />
                                 )} />
-                                <Controller name="observation" control={control} rules={{ required: " observation" }} render={({ field }) => (
+                                <Controller name="observation" control={control} render={({ field }) => (
                                     <Input radius="sm" {...field} label="OBSERVATION" />
                                 )} />
                                 <span className="flex gap-2">

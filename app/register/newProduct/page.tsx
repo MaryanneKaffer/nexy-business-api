@@ -26,7 +26,6 @@ export default function NewProduct() {
                 throw new Error("Couldn't register product");
             }
 
-            const result = await res.json();
             setRegsResult(data.name)
             setTimeout(() => {
                 router.push("/");
@@ -43,7 +42,7 @@ export default function NewProduct() {
 
     return (
         <>
-            <section className="flex flex-col bg-[#0F0F0F] gap-4 w-[40dvw] absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-fit mx-auto p-8 rounded-lg">
+            <section className="flex flex-col dark:bg-[#18181B] bg-[#D4D4D8] gap-4 w-[40dvw] absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-fit mx-auto p-8 rounded-lg">
                 <HomeButton />
                 <h1 className="text-3xl text-center">Register new Product</h1>
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4">
@@ -54,7 +53,7 @@ export default function NewProduct() {
                     </span>
                     <span className="flex gap-2">
                         <Controller name="size" control={control} rules={{ required: " size" }} render={({ field }) => (
-                            <Input type="number" size="lg" {...field} label="Size" radius="sm" />
+                            <Input size="lg" {...field} label="Size" radius="sm" />
                         )} />
                         <Controller name="unitPrice" control={control} rules={{ required: " unit price" }} render={({ field }) => (
                             <Input type="number" size="lg" {...field} label="Unit price" radius="sm" />
@@ -63,7 +62,7 @@ export default function NewProduct() {
                     <Controller name="description" control={control} render={({ field }) => (
                         <Input size="lg" {...field} label="Description" radius="sm" />
                     )} />
-                    <Button size="lg" type="submit" radius="sm">Register</Button>
+                    <Button size="lg" type="submit" radius="sm" color="primary">Register</Button>
                 </form>
             </section>
             {errorMessage && <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="danger" title={errorMessage} />}

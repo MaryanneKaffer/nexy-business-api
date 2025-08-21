@@ -9,6 +9,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     try {
         const customer = await prisma.customer.findUnique({
             where: { id: Number(id) },
+            include: {
+                orders: {
+                    include: {
+                        items: {
+                            include: { product: true }
+                        }
+                    }
+                }
+            }
         });
 
         if (!customer) {
@@ -23,9 +32,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
     const body = await req.json();
+    const { id } = await params;
 
     const customer = await prisma.customer.update({
-        where: { id: Number(params.id) },
+        where: { id: Number(id) },
         data: {
             corporateName: body.corporateName,
             email: body.email,
@@ -44,14 +54,22 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     return NextResponse.json(customer);
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, context: { params: { id: string } }) {
+    const { id } = context.params;
+
     try {
-        const customer = await prisma.customer.delete({
-            where: { id: Number(params.id) },
+        await prisma.order.updateMany({
+            where: { customerId: Number(id) },
+            data: { customerId: 0 },
         });
 
-        return NextResponse.json({ message: "Customer deleted successfully", customer });
+        const customer = await prisma.customer.delete({
+            where: { id: Number(id) },
+        });
+
+        return NextResponse.json({ message: "Customer deleted and orders reassigned", customer });
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: "Failed to delete customer" }, { status: 500 });
     }
 }
