@@ -8,8 +8,11 @@ import { Product } from "@/app/api/products/route";
 import { Cards } from "@/components/cards";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-import { Alert, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
+import { Alert } from "@heroui/react";
 import HomeButton from "@/components/homeButton";
+import DeleteButton from "../../components/deleteButton";
+import HistoryInfo from "./components/historyInfo";
+import { OrderItems } from "@prisma/client";
 
 interface ProductTotals {
     [productId: number]: { quantity: number; total: number };
@@ -23,6 +26,7 @@ export default function ViewCustomer() {
     const [deleted, setDeleted] = useState("")
     const [productTotal, setProductTotal] = useState<ProductTotals>({});
     const router = useRouter();
+    const excludedKeys = ["totalSpent", "orders", "id"]
 
     useEffect(() => {
         async function fetchData() {
@@ -48,7 +52,7 @@ export default function ViewCustomer() {
 
             const totals: { [productId: number]: { quantity: number; total: number } } = {};
 
-            allItems.forEach((item: any) => {
+            allItems.forEach((item: OrderItems) => {
                 const product = productsData.find((p: Product) => p.id === item.productId);
                 if (!product) return;
 
@@ -75,106 +79,40 @@ export default function ViewCustomer() {
         fetchData();
     }, [id]);
 
-    const handleRedirect = () => router.push(`/edit/customer/${data?.id}`);
-
-    const handleDelete = async () => {
-        try {
-            const res = await fetch(`/api/customers/${id}`, {
-                method: "DELETE",
-            });
-
-            if (!res.ok) {
-                const error = await res.json();
-                alert(`Erro: ${error.error}`);
-                return;
-            }
-
-            setDeleted(data?.corporateName ?? "customer")
-            setTimeout(() => {
-                router.push("/");
-            }, 3000);
-        } catch (err) {
-            alert("Couldn't delete customer");
-        }
-    };
-
     return (
-        <section className="flex gap-2">
-            <div className="p-8 mx-auto w-[40%] dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm relative">
+        <section className="flex lg:flex-row flex-col gap-2 relative">
+            <div className="sm:p-8 p-5 mx-auto lg:w-[40%] w-full dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm relative">
                 <HomeButton />
                 {data && (
-                    <div className="h-full flex flex-col">
-                        <h1 className="text-2xl font-bold text-center">{data.corporateName}</h1>
-                        <h1 className="text-xl font-bold text-center mb-5 text-gray-500">Id: {data.id}</h1>
-                        <div className={`grid grid-cols-2 gap-3`}>
-                            {Object.entries(data).filter(([key, _]) => key !== "id" && key !== "totalSpent" && key !== "orders").map(([key, value]) => (
-                                <Input
-                                    key={key}
-                                    label={key.toUpperCase()}
+                    <div className="h-full flex flex-col sm:gap-3 gap-2">
+                        <span>
+                            <h1 className="sm:text-2xl text-xl text-center mx-auto">{data.corporateName}</h1>
+                            <h1 className="sm:text-xl text-lg font-bold text-center text-gray-500">Id: {data.id}</h1>
+                        </span>
+                        <div className={`grid grid-cols-2 sm:gap-3 gap-2`}>
+                            {Object.entries(data).filter(([key, _]) => !excludedKeys.includes(key)).map(([key, value]) => (
+                                <Input key={key} label={key.toUpperCase()} readOnly radius="sm" className="sm:h-14 h-12"
                                     value={String(value)}
-                                    readOnly
-                                    radius="sm"
                                 />
                             ))}
                         </div>
-                        <Input
-                            className="mt-3"
-                            label="TOTAL SPENT"
+                        <Input className="sm:h-14 h-12" label="TOTAL SPENT" readOnly radius="sm"
                             value={`$${String(Number(data.totalSpent ?? 0).toFixed(2))}`}
-                            readOnly
-                            radius="sm"
                         />
-                        <span className="flex gap-3 w-full mt-auto">
-                            <Button radius="sm" color="primary" className="w-full" onPress={handleRedirect}>Edit</Button>
-                            <Popover>
-                                <PopoverTrigger>
-                                    <Button radius="sm" color="danger" className="w-full">Delete</Button>
-                                </PopoverTrigger>
-                                <PopoverContent>
-                                    <div className="px-1 py-2 flex flex-col">
-                                        <p className="text-md font-bold -mb-1">Are you sure you want to delete {data.corporateName}?</p>
-                                        <p className="text-sm font-bold text-gray-500 text-center">This action is irreversible</p>
-                                        <Button className="px-1 mx-auto gap-1 w-fit mt-2" color="danger" size="md" onPress={handleDelete}>
-                                            Delete
-                                        </Button>
-                                    </div>
-                                </PopoverContent>
-                            </Popover>
+                        <span className="flex gap-3 w-full mt-auto place-center">
+                            <Button radius="sm" color="primary" className="sm:h-12 sm:mt-0 mt-2 h-9 w-full" onPress={() => router.push(`/edit/customer/${data?.id}`)}>Edit</Button>
+                            <DeleteButton name={data.corporateName} item="customers" id={id} setDeleted={setDeleted} />
                         </span>
                     </div>
                 )}
             </div>
-            <div className="p-5 mx-auto w-[60%] h-[86dvh] dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm flex flex-col">
-                <div className="dark:bg-[#202022] bg-[#E4E4E7] gap-3 rounded-sm flex flex-col p-5 h-[49%] overflow-y-scroll">
-                    <span className="flex justify-between">
-                        <h1 className="text-xl">Orders from {data?.corporateName}</h1>
-                        <h1 className="text-xl text-gray-500">Total: {data?.orders?.length ?? 0}</h1>
-                    </span>
-                    <div className="flex flex-col gap-3">
-                        {data?.orders && data.orders.map((o) => (
-                            <Cards key={o.id} title={o.date} id={o.id} content1={`Products: ${o.items.length}`} rightContent1={`Total: ${Number(o.total).toFixed(2)}`} type="order" />
-                        ))}
-                    </div>
-                </div>
-                <div className="dark:bg-[#202022] bg-[#E4E4E7] gap-3 rounded-sm flex flex-col p-5 h-[49%] overflow-y-scroll">
-                    <span className="flex justify-between">
-                        <h1 className="text-xl">Most bought products from {data?.corporateName}</h1>
-                        <h1 className="text-xl text-gray-500">Total: {products.length}</h1>
-                    </span>
-                    <div className="flex flex-col gap-3">
-                        {products && products.map((item) => (
-                            <Cards key={item.id} title={item.name} id={`${item.id} | included in ${data?.orders.filter((order: Order) => order.items.some(i => Number(i.productId) === item.id)).length} orders`} content1={item.description ?? ""}
-                                content2={String(item.size)} rightContent1={`Total: ${productTotal[item.id].total.toFixed(2)}`} rightContent2={`Quantity: ${productTotal[item.id].quantity}`} type="product" />
-                        ))}
-                    </div>
-                </div>
-            </div>
+            <HistoryInfo productTotal={productTotal} products={products} data={data} />
             {deleted && (
-                <Alert
-                    className="fixed top-2 left-1/2 -translate-x-1/2 w-fit"
-                    color="primary"
-                    title={`Customer ${deleted} deleted. Returning...`}
-                />
+                <span className="w-[100dvw] h-[100dvh] absolute top-0 left-0 z-100">
+                    <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="primary"
+                        title={`Customer ${deleted} deleted. Returning...`}
+                    />
+                </span>
             )}
         </section>
     );

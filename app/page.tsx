@@ -64,12 +64,7 @@ export default function Home() {
                   {selectedValue}
                 </Button>
               </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Single selection example"
-                selectedKeys={selectedValue}
-                selectionMode="single"
-                variant="flat"
+              <DropdownMenu disallowEmptySelection aria-label="Select button" selectedKeys={selectedValue} selectionMode="single" variant="flat"
                 onSelectionChange={(keys) => {
                   if (keys !== "all") {
                     const newValue = Array.from(keys).join(", ").replace(/_/g, "").toLowerCase();
@@ -99,8 +94,7 @@ export default function Home() {
             </PopoverContent>
           </Popover>
         </span>
-        <Input
-          isClearable
+        <Input className="w-full" isClearable placeholder="Type to search..." size="lg" radius="sm" startContent={<SearchIcon />} onChange={(e) => setFilter(e.target.value)}
           classNames={{
             label: "text-black/50 dark:text-white/90",
             inputWrapper: [
@@ -110,12 +104,6 @@ export default function Home() {
               "bg-default",
             ],
           }}
-          className="w-full"
-          placeholder="Type to search..."
-          radius="sm"
-          size="lg"
-          onChange={(e) => setFilter(e.target.value)}
-          startContent={<SearchIcon />}
         />
       </div>
       <div className="flex sm:flex-row flex-col gap-2 w-full h-[79dvh] relative">

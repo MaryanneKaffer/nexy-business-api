@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { Order } from "../orders/route";
 
@@ -82,11 +82,12 @@ export async function GET() {
     }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
     const body = await req.json();
+    const { id } = context.params;
 
     const customer = await prisma.customer.update({
-        where: { id: Number(params.id) },
+        where: { id: Number(id) },
         data: {
             corporateName: body.corporateName,
             email: body.email,

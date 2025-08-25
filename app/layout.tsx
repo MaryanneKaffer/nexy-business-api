@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     default: "Business API",
     template: "%s - Business API",
   },
+  description: "API for managing orders, products, and customers with a modern, responsive interface.",
   icons: {
     icon: "/icon.svg",
   },

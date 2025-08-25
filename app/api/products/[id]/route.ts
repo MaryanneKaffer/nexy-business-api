@@ -1,12 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
+    const { id } = context.params;
     try {
         const product = await prisma.product.findUnique({
-            where: { id: Number(params.id) },
+            where: { id: Number(id) },
         });
 
         if (!product) {
@@ -19,11 +20,12 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+    const { id } = context.params;
     const body = await req.json();
 
     const product = await prisma.product.update({
-        where: { id: Number(params.id) },
+        where: { id: Number(id) },
         data: {
             unitPrice: body.unitPrice,
             name: body.name,
@@ -35,7 +37,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     return NextResponse.json(product);
 }
 
-export async function DELETE(req: Request, context: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
     const { id } = context.params;
 
     try {
@@ -44,13 +46,12 @@ export async function DELETE(req: Request, context: { params: { id: string } }) 
             data: { productId: 0 },
         });
 
-        const customer = await prisma.product.delete({
+        const product = await prisma.product.delete({
             where: { id: Number(id) },
         });
 
-        return NextResponse.json({ message: "Product deleted and orders reassigned", customer });
+        return NextResponse.json({ message: "Product deleted and orders reassigned", product });
     } catch (error) {
-        console.error(error);
         return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
     }
 }

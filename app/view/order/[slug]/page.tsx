@@ -22,6 +22,11 @@ export default function ViewPage() {
             const res = await fetch(`/api/orders/${id}`);
             const data = await res.json();
             setData(data)
+            if (!res.ok) {
+                const error = await res.json();
+                alert(error.error);
+                return;
+            }
         }
         fetchData();
     }, [id]);

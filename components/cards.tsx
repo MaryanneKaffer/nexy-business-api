@@ -1,4 +1,4 @@
-import ViewButton from "@/components/viewButton";
+import ViewButton from "@/app/view/components/viewButton";
 import { Card, CardBody } from "@heroui/react";
 import { AiOutlineProduct } from "react-icons/ai";
 import { CgNotes } from "react-icons/cg";

@@ -4,10 +4,11 @@ import { Product } from "@/app/api/products/route";
 import HomeButton from "@/components/homeButton";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-import { Alert, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
+import { Alert } from "@heroui/react";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { useEffect, useState } from "react";
+import DeleteButton from "../../components/deleteButton";
 
 export default function ViewPage() {
     const params = useParams();
@@ -54,31 +55,6 @@ export default function ViewPage() {
         }, 0).toFixed(2)
     };
 
-    function handleRedirect() {
-        router.push(`/edit/product/${id}`);
-    }
-
-    const handleDelete = async () => {
-        try {
-            const res = await fetch(`/api/products/${id}`, {
-                method: "DELETE",
-            });
-
-            if (!res.ok) {
-                const error = await res.json();
-                alert({ error });
-                return;
-            }
-
-            setDeleted(data?.name ?? "product")
-            setTimeout(() => {
-                router.push("/");
-            }, 3000);
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
     return (
         <div className="p-8 mx-auto h-full w-[40%] dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm relative">
             <HomeButton />
@@ -100,32 +76,17 @@ export default function ViewPage() {
                     <Input className="mt-3" readOnly radius="sm" label="TOTAL SOLD" value={String(totalSellings())} />
                     <Input className="mt-3" readOnly radius="sm" label="TOTAL REVENUE" value={String(totalRevenue())} />
                     <span className="flex gap-3 w-full mt-auto">
-                        <Button radius="sm" color="primary" className="w-full" onPress={handleRedirect}>Edit</Button>
-                        <Popover>
-                            <PopoverTrigger>
-                                <Button radius="sm" color="danger" className="w-full">Delete</Button>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                                <div className="px-1 py-2 flex flex-col">
-                                    <p className="text-md font-bold -mb-1">Are you sure you want to delete {data.name}?</p>
-                                    <p className="text-sm font-bold text-gray-500 text-center">This action is irreversible</p>
-                                    <Button className="px-1 mx-auto gap-1 w-fit mt-2" color="danger" size="md" onPress={handleDelete}>
-                                        Delete
-                                    </Button>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
+                        <Button radius="sm" color="primary" className="w-full" onPress={() => router.push(`/edit/product/${id}`)}>Edit</Button>
+                        <DeleteButton name={data.name} item="products" id={id} setDeleted={setDeleted} />
                     </span>
-                </div>
-
-            )}
+                </div>)}
             {deleted && (
-                <Alert
-                    className="fixed top-2 left-1/2 -translate-x-1/2 w-fit"
-                    color="primary"
-                    title={`${deleted} deleted. Returning...`}
-                />
+                <span className="w-[100dvw] h-[100dvh] absolute top-0 left-0 z-100">
+                    <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="primary"
+                        title={`${deleted} deleted. Returning...`}
+                    />
+                </span>
             )}
-        </div>
+        </div >
     );
 }

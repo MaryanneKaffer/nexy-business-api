@@ -11,7 +11,7 @@ export default function HomeButton() {
     }
 
     return (
-        <Button className="bg-transparent w-fit md:size-[40px] size-[25px] p-0 absolute" onPress={handleRedirect}>
+        <Button className="bg-transparent w-fit md:size-[40px] size-[25px] p-0 absolute" onPress={handleRedirect} aria-label="home button">
             <TbArrowBackUp className="md:size-[40px] size-[25px]" />
         </Button>
     );

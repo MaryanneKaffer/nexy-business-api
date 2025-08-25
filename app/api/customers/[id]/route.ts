@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-    const { id } = await params;
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
+    const { id } = context.params;
 
     try {
         const customer = await prisma.customer.findUnique({
@@ -21,18 +21,18 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         });
 
         if (!customer) {
-            return NextResponse.json({ error: "Product not found" }, { status: 404 });
+            return NextResponse.json({ error: "Customer not found" }, { status: 404 });
         }
 
         return NextResponse.json(customer);
     } catch (error) {
-        return NextResponse.json({ error: "Failed to fetch product" }, { status: 500 });
+        return NextResponse.json({ error: "Failed to fetch Customer" }, { status: 500 });
     }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
     const body = await req.json();
-    const { id } = await params;
+    const { id } = context.params;
 
     const customer = await prisma.customer.update({
         where: { id: Number(id) },
