@@ -9,8 +9,8 @@ import { useForm, Controller, FieldErrors } from "react-hook-form";
 
 export default function NewCustomer() {
     const { control, handleSubmit } = useForm();
-    const [regsResult, setRegsResult] = useState("")
     const router = useRouter();
+    const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
     async function onSubmit(data: any) {
@@ -26,12 +26,12 @@ export default function NewCustomer() {
                 throw new Error("Couldn't register customer");
             }
 
-            setRegsResult(data.corporateName)
+            setSuccessMessage(data.corporateName)
             setTimeout(() => {
                 router.push("/");
             }, 3000);
         } catch (error) {
-            setRegsResult(`${error}`)
+            setErrorMessage(`${error}`)
         }
     }
 
@@ -40,60 +40,62 @@ export default function NewCustomer() {
         setErrorMessage(messages)
     }
 
+    const fields = [
+        { name: "corporateName", label: "Corporate name" },
+        { name: "phone", label: "Phone number" },
+        { name: "email", label: "Email", type: "email" },
+        { name: "ssn", label: "Social Security Number" },
+        { name: "city", label: "City" },
+        { name: "state", label: "State" },
+        { name: "district", label: "District" },
+        { name: "stateRegistration", label: "State registration" },
+        { name: "address", label: "Address" },
+        { name: "postcode", label: "Postcode" },
+    ];
+
     return (
-        <>
-            <section className="flex flex-col dark:bg-[#18181B] bg-[#D4D4D8] gap-4 w-[40dvw] absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-fit mx-auto p-8 rounded-sm">
+        <section className="h-full flex">
+            <div className="flex my-auto flex-col dark:bg-[#18181B] bg-[#D4D4D8] relative md:gap-4 gap-2 xl:w-[40dvw] lg:w-[60dvw] w-full h-fit mx-auto md:p-8 p-5 rounded-sm">
                 <HomeButton />
-                <h1 className="text-3xl text-center mb-2">Register new Customer</h1>
+                <h1 className="xl:text-3xl md:text-2xl text-center mb-2">Register new Customer</h1>
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4">
-                    <span className="flex gap-2">
-                        <Controller name="corporateName" control={control} rules={{ required: " corporate name" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="Corporate name" radius="sm" />
-                        )} />
-                        <Controller name="phone" control={control} rules={{ required: " phone number" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="Phone number" radius="sm" />
-                        )} />
+                    <span className="grid grid-cols-2 md:gap-4 gap-2">
+                        {fields.map((item, i) => (
+                            <span key={i} className="flex gap-2">
+                                <Controller
+                                    key={item.name}
+                                    name={item.name}
+                                    control={control}
+                                    rules={{ required: ` ${item.label.toLowerCase()}` }}
+                                    render={({ field }) => (
+                                        <Input
+                                            {...field}
+                                            label={item.label}
+                                            radius="sm"
+                                            type={item.type || "text"}
+                                            className="lg:h-14"
+                                        />
+                                    )}
+                                />
+                            </span>
+                        ))}
                     </span>
-                    <span className="flex gap-2">
-                        <Controller name="email" control={control} rules={{ required: " e-mail" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="Email" type="email" radius="sm" />
-                        )} />
-                        <Controller name="ssn" control={control} rules={{ required: " social security number" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="Social Security Number" radius="sm" />
-                        )} />
-                    </span>
-                    <span className="flex gap-2">
-                        <Controller name="city" control={control} rules={{ required: " city" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="City" radius="sm" />
-                        )} />
-                        <Controller name="state" control={control} rules={{ required: " state" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="State" radius="sm" />
-                        )} />
-                    </span>
-                    <span className="flex gap-2">
-                        <Controller name="district" control={control} rules={{ required: " district" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="District" radius="sm" />
-                        )} />
-                        <Controller name="stateRegistration" control={control} rules={{ required: " state registration" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="State registration" radius="sm" />
-                        )} />
-                    </span>
-                    <span className="flex gap-2">
-                        <Controller name="address" control={control} rules={{ required: " address" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="Address" radius="sm" />
-                        )} />
-                        <Controller name="postcode" control={control} rules={{ required: " postcode" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="Postcode" radius="sm" />
-                        )} />
-                    </span>
-                    <Button size="lg" type="submit" radius="sm" color="primary">Register</Button>
+                    <Button className="lg:h-12" type="submit" radius="sm" color="primary">Register</Button>
                 </form>
-            </section>
-            {errorMessage && <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="danger" title={errorMessage} />}
-            {regsResult.includes("error") ? <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="danger" title={regsResult} />
-                :
-                regsResult && <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="success" title={`Customer ${regsResult} successfully registered. Returning...`} />
-            }
-        </>
+            </div>
+            {errorMessage && (
+                <Alert className="fixed top-2 left-1/2 -translate-x-1/2 sm:w-fit w-[80dvw]"
+                    color="danger"
+                    title={errorMessage} />
+            )}
+
+            {successMessage && (
+                <span className="w-[100dvw] h-[100dvh] absolute top-0 left-0 z-100">
+                    <Alert className="fixed top-2 left-1/2 -translate-x-1/2 sm:w-fit w-[80dvw]"
+                        color="success"
+                        title={`Customer ${successMessage} successfully registered. Returning...`} />
+                </span>
+            )}
+        </section>
     )
 }

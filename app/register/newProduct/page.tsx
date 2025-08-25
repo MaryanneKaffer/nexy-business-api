@@ -9,8 +9,8 @@ import HomeButton from "@/components/homeButton";
 
 export default function NewProduct() {
     const { control, handleSubmit } = useForm();
-    const [regsResult, setRegsResult] = useState("")
     const router = useRouter();
+    const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
     async function onSubmit(data: any) {
@@ -26,12 +26,12 @@ export default function NewProduct() {
                 throw new Error("Couldn't register product");
             }
 
-            setRegsResult(data.name)
+            setSuccessMessage(data.name)
             setTimeout(() => {
                 router.push("/");
             }, 3000);
         } catch (error) {
-            setRegsResult(`${error}`)
+            setErrorMessage(`${error}`)
         }
     }
 
@@ -41,35 +41,42 @@ export default function NewProduct() {
     }
 
     return (
-        <>
-            <section className="flex flex-col dark:bg-[#18181B] bg-[#D4D4D8] gap-4 w-[40dvw] absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-fit mx-auto p-8 rounded-lg">
+        <section className="h-full flex">
+            <div className="flex my-auto flex-col dark:bg-[#18181B] bg-[#D4D4D8] relative md:gap-4 gap-2 xl:w-[40dvw] lg:w-[60dvw] w-full h-fit mx-auto md:p-8 p-5 rounded-sm">
                 <HomeButton />
-                <h1 className="text-3xl text-center">Register new Product</h1>
-                <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4">
+                <h1 className="xl:text-3xl md:text-2xl text-center mb-2">Register new Product</h1>
+                <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col md:gap-4 gap-2">
                     <span className="flex gap-2">
                         <Controller name="name" control={control} rules={{ required: " product name" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="Product name" radius="sm" />
+                            <Input className="lg:h-14" {...field} label="Product name" radius="sm" />
                         )} />
                     </span>
                     <span className="flex gap-2">
                         <Controller name="size" control={control} rules={{ required: " size" }} render={({ field }) => (
-                            <Input size="lg" {...field} label="Size" radius="sm" />
+                            <Input className="lg:h-14" {...field} label="Size" radius="sm" />
                         )} />
                         <Controller name="unitPrice" control={control} rules={{ required: " unit price" }} render={({ field }) => (
-                            <Input type="number" size="lg" {...field} label="Unit price" radius="sm" />
+                            <Input type="number" {...field} label="Unit price" radius="sm" className="lg:h-14" />
                         )} />
                     </span>
                     <Controller name="description" control={control} render={({ field }) => (
-                        <Input size="lg" {...field} label="Description" radius="sm" />
+                        <Input className="lg:h-14"{...field} label="Description" radius="sm" />
                     )} />
-                    <Button size="lg" type="submit" radius="sm" color="primary">Register</Button>
+                    <Button className="lg:h-14 md:mt-0 mt-1" type="submit" radius="sm" color="primary">Register</Button>
                 </form>
-            </section>
-            {errorMessage && <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="danger" title={errorMessage} />}
-            {regsResult.includes("error") ? <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="danger" title={regsResult} />
-                :
-                regsResult && <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="success" title={`Product ${regsResult} successfully registered. Returning...`} />
-            }
-        </>
+            </div>
+            {errorMessage && (
+                <Alert className="fixed top-2 left-1/2 -translate-x-1/2 sm:w-fit w-[80dvw]"
+                    color="danger"
+                    title={errorMessage} />
+            )}
+            {successMessage && (
+                <span className="w-[100dvw] h-[100dvh] absolute top-0 left-0 z-100">
+                    <Alert className="fixed top-2 left-1/2 -translate-x-1/2 sm:w-fit w-[80dvw]"
+                        color="success"
+                        title={`Product ${successMessage} successfully registered. Returning...`} />
+                </span>
+            )}
+        </section>
     )
 }

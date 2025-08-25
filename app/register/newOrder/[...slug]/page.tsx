@@ -1,5 +1,6 @@
 "use client"
 import { Order } from "@/app/api/orders/route";
+import HomeButton from "@/components/homeButton";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Alert, Autocomplete, AutocompleteItem } from "@heroui/react";
@@ -11,17 +12,17 @@ import { Controller, useForm, FieldErrors } from "react-hook-form";
 export default function NewOrder() {
     const params = useParams();
     const { control, handleSubmit, setValue, reset } = useForm();
-    const [regsResult, setRegsResult] = useState("")
     const router = useRouter();
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
     const [selectedCustomerId, setSelectedCustomerId] = useState<number>();
     const [selectedProducts, setSelectedProducts] = useState<(Product | null)[]>([null, null, null, null, null, null, null, null]);
-    const [errorMessage, setErrorMessage] = useState("");
     const [quantity, setQuantity] = useState<number[]>([0, 0, 0, 0, 0, 0, 0, 0]);
     const [itemTotal, setItemTotal] = useState<number[]>([]);
     const copyId = (params.slug as string) === "default" ? "" : (params.slug as string);
     const [copied, setCopied] = useState<Order>()
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         async function fetchData() {
@@ -54,12 +55,7 @@ export default function NewOrder() {
 
             const orderPayload = {
                 customerId: selectedCustomerId,
-                date: `${new Date().getFullYear()}-` +
-                    `${(new Date().getMonth() + 1).toString().padStart(2, "0")}-` +
-                    `${new Date().getDate().toString().padStart(2, "0")} ` +
-                    `${new Date().getHours().toString().padStart(2, "0")}:` +
-                    `${new Date().getMinutes().toString().padStart(2, "0")}:` +
-                    `${new Date().getSeconds().toString().padStart(2, "0")}`,
+                date: new Date().toISOString().slice(0, 19).replace("T", " "),
                 paymentType: formData.paymentType,
                 deliveryAddress: selectedCustomer?.address ?? "",
                 total: Number(formData.total),
@@ -83,10 +79,10 @@ export default function NewOrder() {
 
             if (!updateRes.ok) throw new Error("Couldn't update customer's totalSpent");
 
-            setRegsResult(selectedCustomer?.corporateName || "");
+            setSuccessMessage(selectedCustomer?.corporateName || "");
             setTimeout(() => router.push("/"), 3000);
         } catch (error) {
-            setRegsResult(`${error}`);
+            setErrorMessage(`${error}`);
         }
     }
 
@@ -166,11 +162,15 @@ export default function NewOrder() {
     return (
         <>
             <section className="h-full w-full">
-                <form onSubmit={handleSubmit(onSubmit, onError)} className="h-full w-full flex gap-2 justify-between">
-                    <div className={`w-[35dvw] p-8 dark:bg-[#18181B] bg-[#D4D4D8] gap-4 rounded-sm flex flex-col transition-all duration-300 ${selectedCustomer ? "h-full" : "h-44"}`}>
-                        <h1 className="text-3xl text-center">Select a customer</h1>
+                <form onSubmit={handleSubmit(onSubmit, onError)} className="h-full w-full flex lg:flex-row flex-col gap-2 justify-between">
+                    <div className={`lg:w-[35dvw] sm:px-8 sm:py-6 p-5 dark:bg-[#18181B] bg-[#D4D4D8] md:gap-4 gap-2 rounded-sm flex flex-col transition-all duration-300 ${selectedCustomer ? "lg:h-full md:h-[105dvh] h-[80dvh]" : "md:h-44 h-32"}`}>
+                        <span className="flex relative items-center w-full">
+                            <HomeButton />
+                            <h1 className="sm:text-2xl text-xl text-center mx-auto">Select a customer</h1>
+                        </span>
                         <Controller name="customerId" control={control} render={({ field }) => (
                             <Autocomplete
+                                className="sm:h-14 h-12"
                                 {...field}
                                 radius="sm"
                                 selectedKey={field.value ? String(field.value) : null}
@@ -191,6 +191,7 @@ export default function NewOrder() {
                             {selectedCustomer && Object.entries(selectedCustomer).map(([key, value]) => (
                                 key !== "corporateName" && key !== "totalSpent" && (
                                     <Input
+                                        className="sm:h-14 h-12"
                                         key={key}
                                         label={key.toUpperCase()}
                                         value={String(value ?? "")}
@@ -202,70 +203,80 @@ export default function NewOrder() {
                         {selectedCustomer && (
                             <>
                                 <Controller name="deliveryAddress" control={control} rules={{ required: " delivery address" }} render={({ field }) => (
-                                    <Input radius="sm" className="mt-auto" {...field} label="DELIVERY ADDRESS" />
+                                    <Input radius="sm" className="mt-auto sm:h-14 h-12" {...field} label="DELIVERY ADDRESS" />
                                 )} />
                                 <Controller name="observation" control={control} render={({ field }) => (
-                                    <Input radius="sm" {...field} label="OBSERVATION" />
+                                    <Input radius="sm" {...field} label="OBSERVATION" className="sm:h-14 h-12" />
                                 )} />
                                 <span className="flex gap-2">
                                     <Controller name="total" control={control} rules={{ required: " total" }} render={({ field }) => (
-                                        <Input radius="sm" {...field} label="TOTAL" readOnly value={field.value ? Number(field.value).toFixed(2) : "0.00"} />
+                                        <Input radius="sm" className="sm:h-14 h-12" {...field} label="TOTAL" readOnly value={field.value ? Number(field.value).toFixed(2) : "0.00"} />
                                     )} />
                                     <Controller name="paymentType" control={control} rules={{ required: " payment type" }} render={({ field }) => (
-                                        <Input radius="sm" {...field} label="PAYMENT TYPE" />
+                                        <Input radius="sm" className="sm:h-14 h-12" {...field} label="PAYMENT TYPE" />
                                     )} />
                                 </span>
-                                <Button radius="sm" size="lg" color="primary" type="submit">Register order</Button>
+                                <Button radius="sm" className="sm:h-12 sm:mt-0 mt-1" color="primary" type="submit">Register order</Button>
                             </>
                         )}
                     </div>
-                    <div className="p-8 w-[62%] dark:bg-[#18181B] bg-[#D4D4D8] h-[86.5dvh] gap-3 rounded-sm grid grid-cols-2 overflow-y-scroll">
-                        {selectedProducts.map((product, index) => (
-                            <div key={index} className={`dark:bg-[#1F1F21] bg-[#E4E4E7] transition-all h-[380px] duration-200 ${index === 2 || index === 3 && "mb-6"} rounded-sm p-5 flex flex-col gap-3`}>
-                                <Controller name={`products.${index}.productId`} control={control} rules={index === 0 ? { required: "at least 1 product" } : {}} render={({ field }) => (
-                                    <Autocomplete
-                                        {...field}
-                                        radius="sm"
-                                        defaultItems={products}
-                                        label="Product"
-                                        placeholder="Search a product"
-                                        selectedKey={field.value ? String(field.value) : null}
-                                        onSelectionChange={(key) => {
-                                            const id = key ? Number(key) : null;
-                                            field.onChange(id);
-                                            field.onBlur();
-                                            handleProduct(index, Number(key))
-                                        }}                          >
-                                        {products.map((item) => <AutocompleteItem isDisabled={selectedProducts.includes(item)} key={item.id}>{item.name}</AutocompleteItem>)}
-                                    </Autocomplete>
-                                )} />
-                                <span className="grid grid-cols-2 gap-3">
-                                    {product && Object.entries(product).map(([key, value]) => (
-                                        <Input
-                                            key={key}
-                                            label={key.toUpperCase()}
-                                            value={String(value ?? "")}
-                                            readOnly
-                                            radius="sm"
-                                        />
-                                    ))}
-                                    {product && <Controller name={`quantity_${index}`} control={control} rules={{ required: ` product ${index} quantity` }} render={({ field }) => (
-                                        <Input radius="sm" {...field} label="QUANTITY" onChange={(e) => { handleQuantityChange(index, Number(e.target.value)); field.onChange(Number(e.target.value)); }} />
+                    <div className="sm:px-8 sm:py-6 p-5 lg:w-[62%] dark:bg-[#18181B] bg-[#D4D4D8] lg:h-[86.6dvh] rounded-sm overflow-y-scroll">
+                        <h1 className="sm:text-2xl text-xl text-center mb-3">Products</h1>
+                        <span className="grid md:grid-cols-2 grid-cols-1 gap-2">
+                            {selectedProducts.map((product, index) => (
+                                <div key={index} className={`dark:bg-[#1F1F21] bg-[#E4E4E7] transition-all md:h-[365px] h-[325px] duration-200 ${index === 2 || index === 3 && "lg:mb-6"} rounded-sm p-5 flex flex-col gap-3`}>
+                                    <Controller name={`products.${index}.productId`} control={control} rules={index === 0 ? { required: "at least 1 product" } : {}} render={({ field }) => (
+                                        <Autocomplete
+                                            {...field}
+                                            radius="sm" className="sm:h-14 h-12"
+                                            defaultItems={products}
+                                            label="Product" placeholder="Search a product"
+                                            selectedKey={field.value ? String(field.value) : null}
+                                            onSelectionChange={(key) => {
+                                                const id = key ? Number(key) : null;
+                                                field.onChange(id);
+                                                field.onBlur();
+                                                handleProduct(index, Number(key))
+                                            }}                          >
+                                            {products.map((item) => <AutocompleteItem isDisabled={selectedProducts.includes(item)} key={item.id}>{item.name}</AutocompleteItem>)}
+                                        </Autocomplete>
+                                    )} />
+                                    <span className="grid grid-cols-2 gap-3">
+                                        {product && Object.entries(product).map(([key, value]) => (
+                                            <Input
+                                                key={key}
+                                                label={key.toUpperCase()}
+                                                value={String(value ?? "")}
+                                                readOnly radius="sm"
+                                                className="sm:h-14 h-12"
+                                            />
+                                        ))}
+                                        {product && <Controller name={`quantity_${index}`} control={control} rules={{ required: ` product ${index} quantity` }} render={({ field }) => (
+                                            <Input radius="sm" {...field} className="sm:h-14 h-12" label="QUANTITY" onChange={(e) => { handleQuantityChange(index, Number(e.target.value)); field.onChange(Number(e.target.value)); }} />
+                                        )} />}
+                                    </span>
+                                    {product && <Controller name={`itemTotal_${index}`} control={control} rules={{ required: ` product ${index} total` }} render={({ field }) => (
+                                        <Input radius="sm" {...field} className="sm:h-14 h-12" label="TOTAL" readOnly value={field.value ? Number(field.value).toFixed(2) : "0.00"} />
                                     )} />}
-                                </span>
-                                {product && <Controller name={`itemTotal_${index}`} control={control} rules={{ required: ` product ${index} total` }} render={({ field }) => (
-                                    <Input radius="sm" {...field} label="TOTAL" readOnly value={field.value ? Number(field.value).toFixed(2) : "0.00"} />
-                                )} />}
-                            </div>
-                        ))}
+                                </div>
+                            ))}
+                        </span>
                     </div>
                 </form>
             </section>
-            {errorMessage && <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="danger" title={errorMessage} />}
-            {regsResult.includes("error") ? <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="danger" title={regsResult} />
-                :
-                regsResult && <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="success" title={`Order from ${regsResult} successfully registered. Returning...`} />
-            }
+            {errorMessage && (
+                <Alert className="fixed top-2 left-1/2 -translate-x-1/2 sm:w-fit w-[80dvw]"
+                    color="danger"
+                    title={errorMessage} />
+            )}
+
+            {successMessage && (
+                <span className="w-[100dvw] h-[100dvh] absolute top-0 left-0 z-100">
+                    <Alert className="fixed top-2 left-1/2 -translate-x-1/2 sm:w-fit w-[80dvw]"
+                        color="success"
+                        title={`Order from ${successMessage} successfully registered. Returning...`} />
+                </span>
+            )}
         </>
     )
 }

@@ -1,12 +1,24 @@
+"use client"
 import { Customer } from "@/app/api/customers/route"
 import { Order } from "@/app/api/orders/route"
 import { Product } from "@/app/api/products/route"
-import { useMemo } from "react"
+import { Button } from "@heroui/button"
+import { useEffect, useMemo, useState } from "react"
 
 export default function SellingsTable({ orders, products, customers }: { orders: Order[], products: Product[], customers: Customer[] }) {
-    const now = new Date()
-    const currentMonth = now.getMonth()
-    const currentYear = now.getFullYear()
+    const [now, setNow] = useState<Date | null>(new Date());
+    const currentMonth = now?.getUTCMonth()
+    const currentYear = now?.getUTCFullYear()
+    const [mobile, setMobile] = useState(false);
+    const [isOpen, setOpen] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => setMobile(window.innerWidth < 768);
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     const month = orders.filter(o => {
         const orderDate = new Date(o.date)
         return orderDate.getMonth() === currentMonth && orderDate.getFullYear() === currentYear
@@ -34,7 +46,7 @@ export default function SellingsTable({ orders, products, customers }: { orders:
             .sort((a, b) => b.revenue - a.revenue)
     }, [orders, products])
 
-    const bestCustomers = customers.sort((a, b) => (b.totalSpent ?? 0) - (a.totalSpent ?? 0))
+    const bestCustomers = [...customers].sort((a, b) => (b.totalSpent ?? 0) - (a.totalSpent ?? 0));
 
     const content = [
         {
@@ -47,15 +59,23 @@ export default function SellingsTable({ orders, products, customers }: { orders:
     ]
 
     return (
-        <div className="w-[295px] h-full dark:bg-[#27272A] bg-[#D4D4D8] rounded-lg p-5">
-            {content.map((item, index) => (
-                <span key={item.name + index}>
-                    <p className="text-blue-500 text-xl">{item.name}</p>
-                    {item.value.map((value, i) => (
-                        <p key={i} className="dark:text-gray-300 ml-3 text-md my-1">{String(value)}</p>
-                    ))}
-                </span>
-            ))}
-        </div>
+        <>
+            {mobile &&
+                <Button className="h-12 w-full dark:bg-[#27272A] bg-[#D4D4D8] justify-start " radius="sm" onPress={() => setOpen(!isOpen)}>
+                    {isOpen ? "Close sellings" : "Open sellings"}
+                </Button>
+            }
+            <div className={`xl:w-[305px] z-10 sm:static absolute top-9 transition-all flex sm:flex-col sm:w-[30%] sm:h-full dark:bg-[#27272A] bg-[#DDDDE0] sm:bg-[#D4D4D8] sm:rounded-lg rounded-b-lg xl:p-5 p-3
+             ${mobile ? (isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0") : "max-h-none opacity-100"}`}>
+                {content.map((item, index) => (
+                    <span key={item.name + index}>
+                        <p className="text-blue-500 xl:text-xl sm:text-lg text-sm leading-tight">{item.name}</p>
+                        {item.value.map((value, i) => (
+                            <p key={i} className="dark:text-gray-300 sm:ml-3 ml-1 sm:my-1 xl:text-lg sm:text-sm text-[12px] ">{String(value)}</p>
+                        ))}
+                    </span>
+                ))}
+            </div>
+        </>
     )
 }

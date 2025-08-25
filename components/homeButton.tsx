@@ -11,8 +11,8 @@ export default function HomeButton() {
     }
 
     return (
-        <Button className="absolute top-6 left-2 bg-transparent max-w-12" size="lg" onPress={handleRedirect}>
-            <TbArrowBackUp size={40}/>
+        <Button className="bg-transparent w-fit md:size-[40px] size-[25px] p-0 absolute" onPress={handleRedirect}>
+            <TbArrowBackUp className="md:size-[40px] size-[25px]" />
         </Button>
     );
 }

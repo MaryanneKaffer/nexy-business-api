@@ -5,7 +5,7 @@ import { Cards } from "./cards";
 
 export default function ApiContent({ type, filter, orders, products, customers }: { type: string, filter: string, orders: Order[], products: Product[], customers: Customer[] }) {
     return (
-        <div className="w-full h-full overflow-y-scroll scroll-hidden dark:bg-[#27272A] bg-[#D4D4D8] rounded-sm p-6">
+        <div className="w-full h-full overflow-y-scroll scroll-hidden dark:bg-[#27272A] bg-[#D4D4D8] rounded-sm lg:p-6 md:p-4.5 p-3">
             <div className="flex flex-col gap-2">
                 {type === "customers" && customers && customers.length > 0 ? (filter ? customers.filter((c: Customer) => (c.corporateName.includes(filter))) : customers).map((item) => (
                     <Cards key={item.id} title={item.corporateName} id={String(item.id)} content1={item.email} content2={item.ssn}
