@@ -56,33 +56,31 @@ export default function ViewPage() {
     };
 
     return (
-        <div className="p-8 mx-auto h-full w-[40%] dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm relative">
+        <div className="sm:p-8 p-5 mx-auto h-full lg:w-[40%] w-full dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm relative">
             <HomeButton />
             {data && (
-                <div className="h-full flex flex-col">
-                    <h1 className="text-2xl font-bold text-center">{data.name}</h1>
-                    <h1 className="text-xl font-bold text-center mb-5 text-gray-500">Id: {data.id}</h1>
-                    <div className={`grid grid-cols-2 gap-3`}>
+                <div className="h-full flex flex-col sm:gap-3 gap-2">
+                    <span>
+                        <h1 className="sm:text-2xl text-xl text-center mx-auto">{data.name}</h1>
+                        <h2 className="sm:text-xl text-lg font-bold text-center text-gray-500">Id: {data.id}</h2>
+                    </span>
+                    <div className={`grid grid-cols-2 sm:gap-3 gap-2`}>
                         {Object.entries(data).filter(([key, _]) => key !== "id").map(([key, value]) => (
-                            <Input
-                                key={key}
-                                label={key.toUpperCase()}
+                            <Input key={key} label={key.toUpperCase()} readOnly radius="sm" className="sm:h-14 h-12"
                                 value={String(value)}
-                                readOnly
-                                radius="sm"
                             />
                         ))}
                     </div>
-                    <Input className="mt-3" readOnly radius="sm" label="TOTAL SOLD" value={String(totalSellings())} />
-                    <Input className="mt-3" readOnly radius="sm" label="TOTAL REVENUE" value={String(totalRevenue())} />
+                    <Input readOnly radius="sm" label="TOTAL SOLD" value={String(totalSellings())} className="sm:h-14 h-12" />
+                    <Input readOnly radius="sm" label="TOTAL REVENUE" value={String(totalRevenue())} className="sm:h-14 h-12" />
                     <span className="flex gap-3 w-full mt-auto">
-                        <Button radius="sm" color="primary" className="w-full" onPress={() => router.push(`/edit/product/${id}`)}>Edit</Button>
+                        <Button radius="sm" color="primary" className="sm:h-12 sm:mt-0 mt-2 h-9 w-full" onPress={() => router.push(`/edit/product/${id}`)}>Edit</Button>
                         <DeleteButton name={data.name} item="products" id={id} setDeleted={setDeleted} />
                     </span>
                 </div>)}
             {deleted && (
                 <span className="w-[100dvw] h-[100dvh] absolute top-0 left-0 z-100">
-                    <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="primary"
+                    <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-[80dvw]" color="primary"
                         title={`${deleted} deleted. Returning...`}
                     />
                 </span>

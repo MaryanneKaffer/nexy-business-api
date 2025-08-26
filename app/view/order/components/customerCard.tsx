@@ -1,7 +1,7 @@
 import { Order } from "@/app/api/orders/route";
-import ViewButton from "@/components/viewButton";
 import { Card, CardBody } from "@heroui/react";
 import { IoPerson } from "react-icons/io5";
+import ViewButton from "../../components/viewButton";
 
 export default function CustomerCard({ data }: { data: Order }) {
     const excludeCustomerKeys = ["email", "id", "totalSpent", "corporateName"];

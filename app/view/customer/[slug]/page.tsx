@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import { Customer } from "@/app/api/customers/route";
 import { Order } from "@/app/api/orders/route";
 import { Product } from "@/app/api/products/route";
-import { Cards } from "@/components/cards";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Alert } from "@heroui/react";
@@ -87,7 +86,7 @@ export default function ViewCustomer() {
                     <div className="h-full flex flex-col sm:gap-3 gap-2">
                         <span>
                             <h1 className="sm:text-2xl text-xl text-center mx-auto">{data.corporateName}</h1>
-                            <h1 className="sm:text-xl text-lg font-bold text-center text-gray-500">Id: {data.id}</h1>
+                            <h2 className="sm:text-xl text-lg font-bold text-center text-gray-500">Id: {data.id}</h2>
                         </span>
                         <div className={`grid grid-cols-2 sm:gap-3 gap-2`}>
                             {Object.entries(data).filter(([key, _]) => !excludedKeys.includes(key)).map(([key, value]) => (
@@ -109,7 +108,7 @@ export default function ViewCustomer() {
             <HistoryInfo productTotal={productTotal} products={products} data={data} />
             {deleted && (
                 <span className="w-[100dvw] h-[100dvh] absolute top-0 left-0 z-100">
-                    <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-fit" color="primary"
+                    <Alert className="fixed top-2 left-1/2 -translate-x-1/2 w-[80dvw]" color="primary"
                         title={`Customer ${deleted} deleted. Returning...`}
                     />
                 </span>

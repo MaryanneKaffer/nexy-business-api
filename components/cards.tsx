@@ -1,8 +1,8 @@
-import ViewButton from "@/app/view/components/viewButton";
 import { Card, CardBody } from "@heroui/react";
 import { AiOutlineProduct } from "react-icons/ai";
 import { CgNotes } from "react-icons/cg";
 import { IoPerson } from "react-icons/io5";
+import ViewButton from "@/app/view/components/viewButton";
 
 export function Cards({ title, id, content1, content2, rightContent1, rightContent2, type }: { title: string; id: string; content1: string, content2?: string, rightContent1: string, rightContent2?: string, type: string }) {
     const icon = type === "order" ? <CgNotes className="my-auto lg:size-[60px] md:size-[45px] sm:block hidden" /> :

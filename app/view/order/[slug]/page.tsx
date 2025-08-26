@@ -1,6 +1,5 @@
 "use client"
 import { Order } from "@/app/api/orders/route";
-import HomeButton from "@/components/homeButton";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
@@ -9,6 +8,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import CustomerCard from "../components/customerCard";
 import ProductList from "../components/productsList";
+import HomeButton from "@/components/homeButton";
 
 export default function ViewPage() {
     const params = useParams();
