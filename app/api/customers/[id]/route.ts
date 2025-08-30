@@ -54,7 +54,7 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
     return NextResponse.json(customer);
 }
 
-export async function DELETE(req: Request, context: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
     const { id } = context.params;
 
     try {
