@@ -3,8 +3,8 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
-    const { id } = context.params;
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+    const { id } = params;
 
     try {
         const customer = await prisma.customer.findUnique({
@@ -30,9 +30,9 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
     }
 }
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
     const body = await req.json();
-    const { id } = context.params;
+    const { id } = params;
 
     const customer = await prisma.customer.update({
         where: { id: Number(id) },
@@ -54,8 +54,8 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
     return NextResponse.json(customer);
 }
 
-export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
-    const { id } = context.params;
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+    const { id } = params;
 
     try {
         await prisma.order.updateMany({
@@ -67,7 +67,10 @@ export async function DELETE(req: NextRequest, context: { params: { id: string }
             where: { id: Number(id) },
         });
 
-        return NextResponse.json({ message: "Customer deleted and orders reassigned", customer });
+        return NextResponse.json({
+            message: "Customer deleted and orders reassigned",
+            customer
+        });
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: "Failed to delete customer" }, { status: 500 });
