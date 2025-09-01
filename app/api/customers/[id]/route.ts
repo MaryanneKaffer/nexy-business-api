@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Record<string, string> }) {
     const { id } = params;
 
     try {
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Record<string, string> }) {
     const body = await req.json();
     const { id } = params;
 
@@ -54,7 +54,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     return NextResponse.json(customer);
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Record<string, string> }) {
     const { id } = params;
 
     try {
