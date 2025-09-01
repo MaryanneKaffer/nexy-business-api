@@ -3,34 +3,30 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: NextRequest, { params }: { params: Record<string, string> }) {
+export async function GET(req: NextRequest, { params }: any) {
     const { id } = params;
 
-    try {
-        const customer = await prisma.customer.findUnique({
-            where: { id: Number(id) },
-            include: {
-                orders: {
-                    include: {
-                        items: {
-                            include: { product: true }
-                        }
+    const customer = await prisma.customer.findUnique({
+        where: { id: Number(id) },
+        include: {
+            orders: {
+                include: {
+                    items: {
+                        include: { product: true }
                     }
                 }
             }
-        });
-
-        if (!customer) {
-            return NextResponse.json({ error: "Customer not found" }, { status: 404 });
         }
+    });
 
-        return NextResponse.json(customer);
-    } catch (error) {
-        return NextResponse.json({ error: "Failed to fetch Customer" }, { status: 500 });
+    if (!customer) {
+        return NextResponse.json({ error: "Customer not found" }, { status: 404 });
     }
+
+    return NextResponse.json(customer);
 }
 
-export async function PUT(req: NextRequest, { params }: { params: Record<string, string> }) {
+export async function PUT(req: NextRequest, { params }: any) {
     const body = await req.json();
     const { id } = params;
 
@@ -54,25 +50,20 @@ export async function PUT(req: NextRequest, { params }: { params: Record<string,
     return NextResponse.json(customer);
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Record<string, string> }) {
+export async function DELETE(req: NextRequest, { params }: any) {
     const { id } = params;
 
-    try {
-        await prisma.order.updateMany({
-            where: { customerId: Number(id) },
-            data: { customerId: 0 },
-        });
+    await prisma.order.updateMany({
+        where: { customerId: Number(id) },
+        data: { customerId: 0 },
+    });
 
-        const customer = await prisma.customer.delete({
-            where: { id: Number(id) },
-        });
+    const customer = await prisma.customer.delete({
+        where: { id: Number(id) },
+    });
 
-        return NextResponse.json({
-            message: "Customer deleted and orders reassigned",
-            customer
-        });
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "Failed to delete customer" }, { status: 500 });
-    }
+    return NextResponse.json({
+        message: "Customer deleted and orders reassigned",
+        customer,
+    });
 }
