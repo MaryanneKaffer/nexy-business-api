@@ -82,12 +82,11 @@ export async function GET() {
     }
 }
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+export async function PUT(req: NextRequest) {
     const body = await req.json();
-    const { id } = context.params;
 
     const customer = await prisma.customer.update({
-        where: { id: Number(id) },
+        where: { id: Number(body.id) },
         data: {
             corporateName: body.corporateName,
             email: body.email,
