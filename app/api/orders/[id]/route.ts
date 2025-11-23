@@ -3,8 +3,9 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
-    const { id } = context.params;
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+    const { id } = params;
+
     try {
         const order = await prisma.order.findUnique({
             where: { id: Number(id) },
