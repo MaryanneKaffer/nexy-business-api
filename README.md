@@ -1,53 +1,120 @@
-# Next.js & HeroUI Template
+# 📦 Fullstack Order Management System
 
-This is a template for creating applications using Next.js 14 (app directory) and HeroUI (v2).
+This project is a **fullstack application** built with **Next.js, React, Prisma, SQLite, Tailwind CSS, and React Router**.
+It provides a simple and responsive system for managing **customers, products, and orders** through an API and frontend interface.
 
-[Try it on CodeSandbox](https://githubbox.com/heroui-inc/heroui/next-app-template)
+---
 
-## Technologies Used
+## 🚀 Tech Stack
 
-- [Next.js 14](https://nextjs.org/docs/getting-started)
-- [HeroUI v2](https://heroui.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
+* **Backend / API**
 
-## How to Use
+  * **Prisma** – ORM for database queries
+  * **SQLite** – Lightweight relational database
+  * **Next.js API Routes** – Backend endpoints for CRUD operations
 
-### Use the template with create-next-app
+* **Frontend**
 
-To create a new project based on this template using `create-next-app`, run the following command:
+  * **React** – UI library
+  * **Next.js** – React framework with App Router
+  * **Tailwind CSS** – Utility-first styling
+  * **React Router** – Client-side navigation
 
-```bash
-npx create-next-app -e https://github.com/heroui-inc/next-app-template
-```
+* **Other**
 
-### Install dependencies
+  * Fully **responsive design** (works on desktop and mobile)
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+---
 
-```bash
-npm install
-```
+## 📂 Features
 
-### Run the development server
+* **Customer Management**
 
-```bash
-npm run dev
-```
+  * Create, list, update, and delete customers
+* **Product Management**
 
-### Setup pnpm (optional)
+  * Create, list, update, and delete products
+* **Order Management**
 
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
+  * Register orders linked to customers and products
+  * View detailed order information
+* **Responsive UI**
 
-```bash
-public-hoist-pattern[]=*@heroui/*
-```
+---
 
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
+## ⚙️ Installation
 
-## License
+1. **Clone the repository**
 
-Licensed under the [MIT license](https://github.com/heroui-inc/next-app-template/blob/main/LICENSE).
+   ```bash
+   git clone https://github.com/MaryanneKaffer/next-business-api.git
+   cd next-business-api
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up the database**
+
+   * Initialize Prisma and the SQLite database:
+
+     ```bash
+     npx prisma migrate dev --name init
+     ```
+
+4. **Run the development server**
+
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 📡 API Endpoints (examples)
+
+### Customers
+
+* `GET /api/customers` → List all customers
+* `POST /api/customers` → Create a new customer
+* `GET /api/customers/:id` → Get customer by ID
+* `PUT /api/customers/:id` → Update customer
+* `DELETE /api/customers/:id` → Delete customer
+
+### Products
+
+* `GET /api/products` → List all products
+* `POST /api/products` → Create a new product
+* `GET /api/products/:id` → Get product by ID
+* `PUT /api/products/:id` → Update product
+* `DELETE /api/products/:id` → Delete product
+
+### Orders
+
+* `GET /api/orders` → List all orders
+* `POST /api/orders` → Create a new order
+* `GET /api/orders/:id` → Get order by ID
+
+---
+
+## 📱 Responsive Design
+
+The application is fully responsive thanks to **Tailwind CSS**, ensuring a smooth experience across desktops, tablets, and smartphones.
+
+---
+
+## 🛠️ Development
+
+* Edit Prisma schema in `prisma/schema.prisma`
+* Run migrations after schema changes:
+
+  ```bash
+  npx prisma migrate dev
+  ```
+* Inspect the database using:
+
+  ```bash
+  npx prisma studio
+  ```
