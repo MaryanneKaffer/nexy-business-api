@@ -20,8 +20,8 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
     }
 }
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
-    const { id } = context.params;
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+    const { id } = await context.params;
     const body = await req.json();
 
     const product = await prisma.product.update({
@@ -37,8 +37,8 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
     return NextResponse.json(product);
 }
 
-export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
-    const { id } = context.params;
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+    const { id } = await context.params;
 
     try {
         await prisma.orderItems.updateMany({
