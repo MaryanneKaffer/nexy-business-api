@@ -80,7 +80,7 @@ export default function NewOrder() {
             if (!updateRes.ok) throw new Error("Couldn't update customer's totalSpent");
 
             setSuccessMessage(selectedCustomer?.corporateName || "");
-            setTimeout(() => router.push("/"), 3000);
+            setTimeout(() => router.push("/home"), 3000);
         } catch (error) {
             setErrorMessage(`${error}`);
         }

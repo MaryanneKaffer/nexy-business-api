@@ -7,7 +7,7 @@ export default function HomeButton() {
     const router = useRouter();
 
     function handleRedirect() {
-        router.push("/");
+        router.push("/home");
     }
 
     return (

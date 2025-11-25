@@ -26,7 +26,7 @@ export default function EditCustomer() {
         const data = await res.json();
         setRegsResult(formData.corporateName);
         setTimeout(() => {
-            router.push("/");
+            router.push("/home");
         }, 3000);
         return data;
     }

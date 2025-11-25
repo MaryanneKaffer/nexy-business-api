@@ -28,7 +28,7 @@ export default function NewProduct() {
 
             setSuccessMessage(data.name)
             setTimeout(() => {
-                router.push("/");
+                router.push("/home");
             }, 3000);
         } catch (error) {
             setErrorMessage(`${error}`)

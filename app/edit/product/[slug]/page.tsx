@@ -25,7 +25,7 @@ export default function EditProduct() {
         const data = await res.json();
         setRegsResult(formData.name);
         setTimeout(() => {
-            router.push("/");
+            router.push("/home");
         }, 3000);
         return data;
     }

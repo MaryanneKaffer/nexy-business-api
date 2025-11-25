@@ -18,7 +18,7 @@ export default function DeleteButton({ name, item, id, setDeleted }: { name: str
 
             setDeleted(name ?? item.replace(/s$/, ""))
             setTimeout(() => {
-                router.push("/");
+                router.push("/home");
             }, 3000);
         } catch (err) {
             alert(`Couldn't delete ${item.replace(/s$/, "")}` + err);
