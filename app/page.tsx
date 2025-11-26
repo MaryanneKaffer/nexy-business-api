@@ -5,11 +5,12 @@ import { useState } from "react";
 import HomePage from "./home/page";
 
 export default function Home() {
-    const [showLoading, setShowLoading] = useState(true);
+    const [loaded, setLoaded] = useState(false);
 
     return (
         <>
-            {showLoading ? <LoadingModal onClose={() => setShowLoading(false)} /> : (<HomePage />)}
+            <LoadingModal onLoad={() => setLoaded(true)} />
+            {loaded && <HomePage />}
         </>
     )
 }

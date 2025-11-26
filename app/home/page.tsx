@@ -10,9 +10,9 @@ import ApiContent from "@/components/apiContent";
 import SellingsTable from "@/components/sellingsTable";
 import { useRouter } from "next/navigation";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { Customer } from "./api/customers/route";
-import { Product } from "./api/products/route";
-import { Order } from "./api/orders/route";
+import { Customer } from "../api/customers/route";
+import { Product } from "../api/products/route";
+import { Order } from "../api/orders/route";
 
 export default function HomePage() {
   const keys = [{ icon: <FaIdCard />, content: "Customers" }, { icon: <IoBagHandleSharp />, content: "Products" }, { icon: <MdOutlinePayments />, content: "Orders" }];
