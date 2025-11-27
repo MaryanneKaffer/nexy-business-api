@@ -54,25 +54,35 @@ export default function SellingsTable({ orders, products, customers }: { orders:
             `This year: $${year.reduce((acc, o) => acc + Number(o.total), 0).toFixed(2)}`,
             `All time: $${orders.reduce((acc, o) => acc + Number(o.total), 0).toFixed(2)}`]
         },
-        { name: "Best selling", value: bestSelling.slice(0, 3).map(p => `${p.name}: $${p.revenue.toFixed(2)}`) },
-        { name: "Best customers", value: bestCustomers.slice(0, 3).map(c => `${c.corporateName}: $${Number(c.totalSpent).toFixed(2)}`) }
+        { name: "Best selling", value: bestSelling.slice(0, 6).map(p => `${p.name}: $${p.revenue.toFixed(2)}`) },
+        { name: "Best customers", value: bestCustomers.slice(0, 6).map(c => `${c.corporateName}: $${Number(c.totalSpent).toFixed(2)}`) }
     ]
+
+    const hasAnyContent = content.some(item =>
+        item.value.some(v => !v.includes("0.00"))
+    );
 
     return (
         <>
             {mobile &&
-                <Button className="h-12 w-full dark:bg-[#27272A] bg-[#D4D4D8] justify-start " radius="sm" onPress={() => setOpen(!isOpen)}>
+                <Button className="h-12 w-full dark:bg-[#27272A] bg-[#D4D4D8] justify-start" radius="sm" onPress={() => setOpen(!isOpen)}>
                     {isOpen ? "Close sellings" : "Open sellings"}
                 </Button>
             }
-            <div className={`xl:w-[305px] z-10 sm:static absolute top-9 transition-all flex sm:flex-col sm:w-[30%] sm:h-full dark:bg-[#27272A] bg-[#DDDDE0] sm:bg-[#D4D4D8] sm:rounded-lg rounded-b-lg xl:p-5 p-3
-             ${mobile ? (isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0") : "max-h-none opacity-100"}`}>
+            <div className={`xl:w-[305px] sm:gap-3 gap-1 z-10 sm:static absolute top-9 transition-all flex flex-col sm:w-[30%] sm:h-full dark:bg-[#27272A] bg-default sm:bg-[#D4D4D8] sm:rounded-lg rounded-b-lg xl:p-5 p-3
+             ${mobile ? (isOpen ? "opacity-100 w-full" : "max-h-0 opacity-0") : "opacity-100"}`}>
+                <p className="dark:text-blue-400 text-blue-500 xl:text-xl sm:text-lg text-sm leading-tight sm:block hidden">Sellings table</p>
+                {!hasAnyContent && (
+                    <p className="text-gray-500 text-sm">Nothing here yet...</p>
+                )}
                 {content.map((item, index) => (
                     <span key={item.name + index}>
-                        <p className="text-blue-500 xl:text-xl sm:text-lg text-sm leading-tight">{item.name}</p>
-                        {item.value.map((value, i) => (
-                            <p key={i} className="dark:text-gray-300 sm:ml-3 ml-1 sm:my-1 xl:text-lg sm:text-sm text-[12px] ">{String(value)}</p>
-                        ))}
+                        {!item.value[0]?.includes("0.00") && (<>
+                            <p className="dark:text-blue-400 text-blue-500 xl:text-xl sm:text-lg text-[14px] leading-tight">{item.name}</p>
+                            {item.value.map((value, i) => (
+                                <p key={i} className="dark:text-gray-300 ml-1 sm:my-1 xl:text-[16px] sm:text-sm text-[12px] leading-tight">{!value.includes("0.00") && String(value)}</p>
+                            ))}
+                        </>)}
                     </span>
                 ))}
             </div>
