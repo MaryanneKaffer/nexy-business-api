@@ -23,6 +23,8 @@ export default function NewOrder() {
     const [copied, setCopied] = useState<Order>()
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [loaded, setLoaded] = useState(false)
+    const [registerLoad, setRegisterLoad] = useState(false)
 
     useEffect(() => {
         async function fetchData() {
@@ -39,10 +41,12 @@ export default function NewOrder() {
             setProducts(data2)
         }
         fetchData();
+        setLoaded(true);
     }, []);
 
     async function onSubmit(formData: any) {
         setErrorMessage("")
+        setRegisterLoad(true)
         try {
             const items = selectedProducts
                 .filter((p) => p !== null)
@@ -80,8 +84,10 @@ export default function NewOrder() {
             if (!updateRes.ok) throw new Error("Couldn't update customer's totalSpent");
 
             setSuccessMessage(selectedCustomer?.corporateName || "");
+            setRegisterLoad(false)
             setTimeout(() => router.push("/home"), 3000);
         } catch (error) {
+            setRegisterLoad(false)
             setErrorMessage(`${error}`);
         }
     }
@@ -163,111 +169,123 @@ export default function NewOrder() {
         <>
             <section className="h-full w-full">
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="h-full w-full flex lg:flex-row flex-col gap-2 justify-between">
-                    <div className={`lg:w-[35dvw] sm:px-8 sm:py-6 p-5 dark:bg-[#18181B] bg-[#D4D4D8] md:gap-4 gap-2 rounded-sm flex flex-col transition-all duration-300 ${selectedCustomer ? "lg:h-full md:h-[105dvh] h-[80dvh]" : "md:h-44 h-32"}`}>
-                        <span className="flex relative items-center w-full">
-                            <HomeButton />
-                            <h1 className="sm:text-2xl text-xl text-center mx-auto">Select a customer</h1>
-                        </span>
-                        <Controller name="customerId" control={control} render={({ field }) => (
-                            <Autocomplete
-                                className="sm:h-14 h-12"
-                                {...field}
-                                radius="sm"
-                                selectedKey={field.value ? String(field.value) : null}
-                                defaultItems={customers}
-                                label="Customer"
-                                placeholder="Search a customer"
-                                onSelectionChange={(key) => {
-                                    const id = key ? Number(key) : undefined;
-                                    field.onChange(id);
-                                    field.onBlur();
-                                    setSelectedCustomerId(id);
-                                }}
-                            >
-                                {customers.map((item) => <AutocompleteItem key={item.id}>{item.corporateName}</AutocompleteItem>)}
-                            </Autocomplete>
-                        )} />
-                        <span className="grid grid-cols-2 gap-3">
-                            {selectedCustomer && Object.entries(selectedCustomer).map(([key, value]) => (
-                                key !== "corporateName" && key !== "totalSpent" && (
-                                    <Input
-                                        className="sm:h-14 h-12"
-                                        key={key}
-                                        label={key.toUpperCase()}
-                                        value={String(value ?? "")}
-                                        isDisabled
-                                        radius="sm"
-                                    />)
-                            ))}
-                        </span>
-                        {selectedCustomer && (
-                            <>
-                                <Controller name="deliveryAddress" control={control} rules={{ required: " delivery address" }} render={({ field }) => (
-                                    <Input radius="sm" className="mt-auto sm:h-14 h-12" {...field} label="DELIVERY ADDRESS" />
-                                )} />
-                                <Controller name="observation" control={control} render={({ field }) => (
-                                    <Input radius="sm" {...field} label="OBSERVATION" className="sm:h-14 h-12" />
-                                )} />
-                                <span className="flex gap-2">
-                                    <Controller name="total" control={control} rules={{ required: " total" }} render={({ field }) => (
-                                        <Input radius="sm" className="sm:h-14 h-12" {...field} label="TOTAL" readOnly value={field.value ? Number(field.value).toFixed(2) : "0.00"} />
-                                    )} />
-                                    <Controller name="paymentType" control={control} rules={{ required: " payment type" }} render={({ field }) => (
-                                        <Input radius="sm" className="sm:h-14 h-12" {...field} label="PAYMENT TYPE" />
-                                    )} />
+                    <div className={`lg:w-[35dvw] sm:px-8 sm:py-6 p-5 dark:bg-default/60 bg-[#D4D4D8] md:gap-4 gap-2 rounded-sm flex flex-col transition-all duration-300 ${selectedCustomer ? "lg:h-full md:h-[105dvh] h-[80dvh]" : "md:h-44 h-32"}`}>
+                        {!loaded ?
+                            <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />
+                            : <>
+                                <span className="flex relative items-center w-full">
+                                    <HomeButton />
+                                    <h1 className="sm:text-2xl text-xl text-center mx-auto">Select a customer</h1>
                                 </span>
-                                <Button radius="sm" className="sm:h-12 sm:mt-0 mt-1" color="primary" type="submit">Register order</Button>
-                            </>
-                        )}
-                    </div>
-                    <div className="sm:px-8 sm:py-6 p-5 lg:w-[62%] dark:bg-[#18181B] bg-[#D4D4D8] lg:h-[86.6dvh] rounded-sm overflow-y-scroll">
-                        <h1 className="sm:text-2xl text-xl text-center mb-3">Products</h1>
-                        <span className="grid md:grid-cols-2 grid-cols-1 gap-2">
-                            {selectedProducts.map((product, index) => (
-                                <div key={index} className={`dark:bg-[#1F1F21] bg-[#E4E4E7] transition-all md:h-[365px] h-[325px] duration-200 ${index === 2 || index === 3 && "lg:mb-6"} rounded-sm p-5 flex flex-col gap-3`}>
-                                    <Controller name={`products.${index}.productId`} control={control} rules={index === 0 ? { required: "at least 1 product" } : {}} render={({ field }) => (
-                                        <Autocomplete
-                                            {...field}
-                                            radius="sm" className="sm:h-14 h-12"
-                                            defaultItems={products}
-                                            label="Product" placeholder="Search a product"
-                                            selectedKey={field.value ? String(field.value) : null}
-                                            onSelectionChange={(key) => {
-                                                const id = key ? Number(key) : null;
-                                                field.onChange(id);
-                                                field.onBlur();
-                                                handleProduct(index, Number(key))
-                                            }}                          >
-                                            {products.map((item) => <AutocompleteItem isDisabled={selectedProducts.includes(item)} key={item.id}>{item.name}</AutocompleteItem>)}
-                                        </Autocomplete>
-                                    )} />
-                                    <span className="grid grid-cols-2 gap-3">
-                                        {product && Object.entries(product).map(([key, value]) => (
-                                            <Input
+                                <Controller name="customerId" control={control} render={({ field }) => (
+                                    <Autocomplete variant="bordered" classNames={{ base: "dark:bg-[#1F1F21] rounded-xl" }}
+                                        className="sm:h-14 h-12"
+                                        {...field}
+                                        radius="sm"
+                                        selectedKey={field.value ? String(field.value) : null}
+                                        defaultItems={customers}
+                                        label="Customer"
+                                        placeholder="Search a customer"
+                                        onSelectionChange={(key) => {
+                                            const id = key ? Number(key) : undefined;
+                                            field.onChange(id);
+                                            field.onBlur();
+                                            setSelectedCustomerId(id);
+                                        }}
+                                    >
+                                        {customers.map((item) => <AutocompleteItem key={item.id}>{item.corporateName}</AutocompleteItem>)}
+                                    </Autocomplete>
+                                )} />
+                                <span className="grid grid-cols-2 gap-3">
+                                    {selectedCustomer && Object.entries(selectedCustomer).map(([key, value]) => (
+                                        key !== "corporateName" && key !== "totalSpent" && (
+                                            <Input classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }}
+                                                className="sm:h-14 h-12"
                                                 key={key}
                                                 label={key.toUpperCase()}
                                                 value={String(value ?? "")}
-                                                readOnly radius="sm"
-                                                className="sm:h-14 h-12"
-                                            />
-                                        ))}
-                                        {product && <Controller name={`quantity_${index}`} control={control} rules={{ required: ` product ${index} quantity` }} render={({ field }) => (
-                                            <Input radius="sm" {...field} className="sm:h-14 h-12" label="QUANTITY" onChange={(e) => { handleQuantityChange(index, Number(e.target.value)); field.onChange(Number(e.target.value)); }} />
-                                        )} />}
-                                    </span>
-                                    {product && <Controller name={`itemTotal_${index}`} control={control} rules={{ required: ` product ${index} total` }} render={({ field }) => (
-                                        <Input radius="sm" {...field} className="sm:h-14 h-12" label="TOTAL" readOnly value={field.value ? Number(field.value).toFixed(2) : "0.00"} />
-                                    )} />}
-                                </div>
-                            ))}
-                        </span>
+                                                isDisabled
+                                                radius="sm"
+                                            />)
+                                    ))}
+                                </span>
+                                {selectedCustomer && (
+                                    <>
+                                        <Controller name="deliveryAddress" control={control} rules={{ required: " delivery address" }} render={({ field }) => (
+                                            <Input radius="sm" className="mt-auto sm:h-14 h-12" {...field} label="DELIVERY ADDRESS" classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }} />
+                                        )} />
+                                        <Controller name="observation" control={control} render={({ field }) => (
+                                            <Input radius="sm" {...field} label="OBSERVATION" className="sm:h-14 h-12" classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }} />
+                                        )} />
+                                        <span className="flex gap-2">
+                                            <Controller name="total" control={control} rules={{ required: " total" }} render={({ field }) => (
+                                                <Input radius="sm" className="sm:h-14 h-12" {...field} label="TOTAL" readOnly value={field.value ? Number(field.value).toFixed(2) : "0.00"} classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }} />
+                                            )} />
+                                            <Controller name="paymentType" control={control} rules={{ required: " payment type" }} render={({ field }) => (
+                                                <Input radius="sm" className="sm:h-14 h-12" {...field} label="PAYMENT TYPE" classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }} />
+                                            )} />
+                                        </span>
+                                        <Button radius="sm" className="sm:h-12 sm:mt-0 mt-1" color="primary" type="submit">Register order</Button>
+                                    </>
+                                )}
+                            </>}
                     </div>
+                    {loaded && (
+                        <div className="sm:px-8 sm:py-6 p-5 lg:w-[62%] dark:bg-default/60 bg-[#D4D4D8] lg:h-[86.6dvh] rounded-sm overflow-y-scroll">
+                            <h1 className="sm:text-2xl text-xl text-center mb-3">Products</h1>
+                            <span className="grid md:grid-cols-2 grid-cols-1 gap-2">
+                                {selectedProducts.map((product, index) => (
+                                    <div key={index} className={`dark:bg-[#1F1F21] bg-[#E4E4E7] transition-all md:h-[365px] h-[325px] duration-200 ${index === 2 || index === 3 && "lg:mb-6"} rounded-sm p-5 flex flex-col gap-3`}>
+                                        <Controller name={`products.${index}.productId`} control={control} rules={index === 0 ? { required: "at least 1 product" } : {}} render={({ field }) => (
+                                            <Autocomplete
+                                                {...field}
+                                                radius="sm" className="sm:h-14 h-12"
+                                                defaultItems={products}
+                                                label="Product" placeholder="Search a product"
+                                                selectedKey={field.value ? String(field.value) : null}
+                                                onSelectionChange={(key) => {
+                                                    const id = key ? Number(key) : null;
+                                                    field.onChange(id);
+                                                    field.onBlur();
+                                                    handleProduct(index, Number(key))
+                                                }}                          >
+                                                {products.map((item) => <AutocompleteItem isDisabled={selectedProducts.includes(item)} key={item.id}>{item.name}</AutocompleteItem>)}
+                                            </Autocomplete>
+                                        )} />
+                                        <span className="grid grid-cols-2 gap-3">
+                                            {product && Object.entries(product).map(([key, value]) => (
+                                                <Input
+                                                    key={key}
+                                                    label={key.toUpperCase()}
+                                                    value={String(value ?? "")}
+                                                    readOnly radius="sm"
+                                                    className="sm:h-14 h-12"
+                                                />
+                                            ))}
+                                            {product && <Controller name={`quantity_${index}`} control={control} rules={{ required: ` product ${index} quantity` }} render={({ field }) => (
+                                                <Input radius="sm" {...field} className="sm:h-14 h-12" label="QUANTITY" onChange={(e) => { handleQuantityChange(index, Number(e.target.value)); field.onChange(Number(e.target.value)); }} />
+                                            )} />}
+                                        </span>
+                                        {product && <Controller name={`itemTotal_${index}`} control={control} rules={{ required: ` product ${index} total` }} render={({ field }) => (
+                                            <Input radius="sm" {...field} className="sm:h-14 h-12" label="TOTAL" readOnly value={field.value ? Number(field.value).toFixed(2) : "0.00"} />
+                                        )} />}
+                                    </div>
+                                ))}
+                            </span>
+                        </div>
+                    )}
                 </form>
             </section>
             {errorMessage && (
                 <Alert className="fixed top-2 left-1/2 -translate-x-1/2 sm:w-fit w-[80dvw]"
                     color="danger"
                     title={errorMessage} />
+            )}
+
+            {registerLoad && (
+                <span className="w-[100dvw] h-[100dvh] absolute top-0 left-0 z-100 bg-default/70">
+                    <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />
+                </span>
             )}
 
             {successMessage && (

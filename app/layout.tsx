@@ -30,7 +30,11 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang="en">
-      <head />
+      <head>
+        <link rel="preconnect" href="https://next-business-api.vercel.app" />
+        <link rel="preload" as="style" href="https://next-business-api.vercel.app/css/2ce5f8feef3c7648.css" />
+        <link rel="preload" as="style" href="https://next-business-api.vercel.app/css/910.css" />
+      </head>
       <body
         className={clsx(
           "min-h-screen text-foreground bg-background font-sans antialiased",

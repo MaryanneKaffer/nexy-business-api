@@ -1,9 +1,9 @@
 "use client"
+import { useEffect, useMemo, useState } from "react"
 import { Customer } from "@/app/api/customers/route"
 import { Order } from "@/app/api/orders/route"
 import { Product } from "@/app/api/products/route"
 import { Button } from "@heroui/button"
-import { useEffect, useMemo, useState } from "react"
 
 export default function SellingsTable({ orders, products, customers }: { orders: Order[], products: Product[], customers: Customer[] }) {
     const [now, setNow] = useState<Date | null>(new Date());
@@ -11,6 +11,7 @@ export default function SellingsTable({ orders, products, customers }: { orders:
     const currentYear = now?.getUTCFullYear()
     const [mobile, setMobile] = useState(false);
     const [isOpen, setOpen] = useState(false);
+    const [loaded, setLoaded] = useState(false)
 
     useEffect(() => {
         const handleResize = () => setMobile(window.innerWidth < 768);
@@ -58,9 +59,13 @@ export default function SellingsTable({ orders, products, customers }: { orders:
         { name: "Best customers", value: bestCustomers.slice(0, 6).map(c => `${c.corporateName}: $${Number(c.totalSpent).toFixed(2)}`) }
     ]
 
-    const hasAnyContent = content.some(item =>
+    const hasAnyContent = content.some(item => {
         item.value.some(v => !v.includes("0.00"))
-    );
+    });
+
+    setTimeout(() => {
+        setLoaded(true)
+    }, 1000);
 
     return (
         <>
@@ -71,20 +76,25 @@ export default function SellingsTable({ orders, products, customers }: { orders:
             }
             <div className={`xl:w-[305px] sm:gap-3 gap-1 z-10 sm:static absolute top-9 transition-all flex flex-col sm:w-[30%] sm:h-full dark:bg-[#27272A] bg-default sm:bg-[#D4D4D8] sm:rounded-lg rounded-b-lg xl:p-5 p-3
              ${mobile ? (isOpen ? "opacity-100 w-full" : "max-h-0 opacity-0") : "opacity-100"}`}>
-                <p className="dark:text-blue-400 text-blue-500 xl:text-xl sm:text-lg text-sm leading-tight sm:block hidden">Sellings table</p>
-                {!hasAnyContent && (
-                    <p className="text-gray-500 text-sm">Nothing here yet...</p>
-                )}
-                {content.map((item, index) => (
-                    <span key={item.name + index}>
-                        {!item.value[0]?.includes("0.00") && (<>
-                            <p className="dark:text-blue-400 text-blue-500 xl:text-xl sm:text-lg text-[14px] leading-tight">{item.name}</p>
-                            {item.value.map((value, i) => (
-                                <p key={i} className="dark:text-gray-300 ml-1 sm:my-1 xl:text-[16px] sm:text-sm text-[12px] leading-tight">{!value.includes("0.00") && String(value)}</p>
-                            ))}
-                        </>)}
-                    </span>
-                ))}
+                {!loaded ?
+                    <Button isLoading size="lg" className="w-full bg-transparent transition-all duration-700" />
+                    :
+                    (<>
+                        <p className="dark:text-blue-400 text-blue-500 xl:text-xl sm:text-lg text-sm leading-tight sm:block hidden">Sellings table</p>
+                        {!hasAnyContent && (
+                            <p className="text-gray-500 text-sm">Nothing here yet...</p>
+                        )}
+                        {content.map((item, index) => (
+                            <span key={item.name + index}>
+                                {!item.value[0]?.includes("0.00") && (<>
+                                    <p className="dark:text-blue-400 text-blue-500 xl:text-xl sm:text-lg text-[14px] leading-tight">{item.name}</p>
+                                    {item.value.map((value, i) => (
+                                        <p key={i} className="dark:text-gray-300 ml-1 sm:my-1 xl:text-[16px] sm:text-sm text-[12px] leading-tight">{!value.includes("0.00") && String(value)}</p>
+                                    ))}
+                                </>)}
+                            </span>
+                        ))}
+                    </>)}
             </div>
         </>
     )

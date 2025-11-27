@@ -26,6 +26,7 @@ export default function ViewCustomer() {
     const [productTotal, setProductTotal] = useState<ProductTotals>({});
     const router = useRouter();
     const excludedKeys = ["totalSpent", "orders", "id"]
+    const [loaded, setLoaded] = useState(false)
 
     useEffect(() => {
         async function fetchData() {
@@ -76,12 +77,16 @@ export default function ViewCustomer() {
             setProductTotal(totals);
         }
         fetchData();
+        setLoaded(true);
     }, [id]);
 
     return (
         <section className="flex lg:flex-row flex-col gap-2 relative">
-            <div className="sm:p-8 p-5 mx-auto lg:w-[40%] w-full dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm relative">
+            <div className="sm:p-8 p-5 mx-auto lg:w-[40%] w-full dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm relative flex-1">
                 <HomeButton />
+                {!loaded &&
+                    <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />
+                }
                 {data && (
                     <div className="h-full flex flex-col sm:gap-3 gap-2">
                         <span>
@@ -90,12 +95,12 @@ export default function ViewCustomer() {
                         </span>
                         <div className={`grid grid-cols-2 sm:gap-3 gap-2`}>
                             {Object.entries(data).filter(([key, _]) => !excludedKeys.includes(key)).map(([key, value]) => (
-                                <Input key={key} label={key.toUpperCase()} readOnly radius="sm" className="sm:h-14 h-12"
+                                <Input key={key} label={key.toUpperCase()} readOnly radius="sm" className="sm:h-14 h-12" classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }}
                                     value={String(value)}
                                 />
                             ))}
                         </div>
-                        <Input className="sm:h-14 h-12" label="TOTAL SPENT" readOnly radius="sm"
+                        <Input className="sm:h-14 h-12 " label="TOTAL SPENT" readOnly radius="sm" classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }}
                             value={`$${String(Number(data.totalSpent ?? 0).toFixed(2))}`}
                         />
                         <span className="flex gap-3 w-full mt-auto place-center">

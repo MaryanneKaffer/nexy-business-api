@@ -55,7 +55,7 @@ export default function NewCustomer() {
 
     return (
         <section className="h-full flex">
-            <div className="flex my-auto flex-col dark:bg-[#18181B] bg-[#D4D4D8] relative md:gap-4 gap-2 xl:w-[40dvw] lg:w-[60dvw] w-full h-fit mx-auto md:p-8 p-5 rounded-sm">
+            <div className="flex my-auto flex-col dark:bg-default/60 bg-[#D4D4D8] relative md:gap-4 gap-2 xl:w-[40dvw] lg:w-[60dvw] w-full h-fit mx-auto md:p-8 p-5 rounded-sm">
                 <HomeButton />
                 <h1 className="xl:text-3xl md:text-2xl text-center mb-2">Register new Customer</h1>
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4">
@@ -68,7 +68,7 @@ export default function NewCustomer() {
                                     control={control}
                                     rules={{ required: ` ${item.label.toLowerCase()}` }}
                                     render={({ field }) => (
-                                        <Input
+                                        <Input classNames={{inputWrapper: "dark:bg-[#1F1F21]"}}
                                             {...field}
                                             label={item.label}
                                             radius="sm"

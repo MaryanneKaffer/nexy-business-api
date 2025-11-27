@@ -1,11 +1,11 @@
 "use client"
+import React from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Order } from "@/app/api/orders/route";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
-import { useParams, useRouter } from "next/navigation";
-import React from "react";
-import { useEffect, useState } from "react";
 import CustomerCard from "../components/customerCard";
 import ProductList from "../components/productsList";
 import HomeButton from "@/components/homeButton";
@@ -16,6 +16,7 @@ export default function ViewPage() {
     const [data, setData] = useState<Order>();
     const router = useRouter();
     const excludeOrderKeys = ["id", "total", "customerId", "customer"];
+    const [loaded, setLoaded] = useState(false)
 
     useEffect(() => {
         async function fetchData() {
@@ -29,14 +30,18 @@ export default function ViewPage() {
             }
         }
         fetchData();
+        setLoaded(true);
     }, [id]);
 
     const handleCopy = () => router.push(`/register/newOrder/${data?.id}`);
 
     return (
         <section className="flex gap-2 lg:flex-row flex-col">
-            <div className="sm:p-8 p-5 mx-auto lg:w-[40%] w-full dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm flex">
+            <div className="sm:p-8 p-5 mx-auto lg:w-[40%] w-full dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm flex min-h-[200px]">
                 <HomeButton />
+                {!loaded &&
+                    <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />
+                }
                 {data && (
                     <div className="h-full w-full flex flex-col gap-3">
                         <h1 className="sm:text-2xl text-xl text-center mx-auto mb-1">Order id: {data.id}</h1>
@@ -44,7 +49,7 @@ export default function ViewPage() {
                             {Object.entries(data).filter(([key, _]) => !excludeOrderKeys.includes(key)).map(([key, value]) => (
                                 <React.Fragment key={key}>
                                     {!Array.isArray(value) && value && (
-                                        <Input
+                                        <Input classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }}
                                             className="sm:h-14 h-12"
                                             key={key}
                                             label={key.toUpperCase()}

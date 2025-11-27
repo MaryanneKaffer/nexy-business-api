@@ -9,7 +9,7 @@ interface ProductTotals {
 
 export default function HistoryInfo({ productTotal, products, data }: { productTotal: ProductTotals, products: Product[], data?: Customer }) {
     return (
-        <div className="p-5 mx-auto lg:w-[60%] w-full lg:h-[86dvh] h-[140dvh] dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm flex flex-col">
+        <div className="p-5 mx-auto lg:w-[60%] w-full lg:h-[86dvh] h-[140dvh] dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm flex flex-col">
             <div className="dark:bg-[#202022] bg-[#E4E4E7] sm:gap-3 gap-2 rounded-sm flex flex-col p-5 h-[49%] overflow-y-scroll">
                 <span className="flex justify-between">
                     <h1 className="sm:text-xl w-[75%]">Orders from {data?.corporateName}</h1>
@@ -21,7 +21,7 @@ export default function HistoryInfo({ productTotal, products, data }: { productT
                     ))}
                 </div>
             </div>
-            <div className="dark:bg-[#202022] bg-[#E4E4E7] gap-3 rounded-sm flex flex-col p-5 h-[49%] overflow-y-scroll">
+            <div className="dark:bg-[#1F1F21] bg-[#E4E4E7] gap-3 rounded-sm flex flex-col p-5 h-[49%] overflow-y-scroll">
                 <span className="flex justify-between">
                     <h1 className="sm:text-xl w-[75%]">Most bought products from {data?.corporateName}</h1>
                     <h1 className="sm:text-xl text-gray-500">Total: {products.length}</h1>

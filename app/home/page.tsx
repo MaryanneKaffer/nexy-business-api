@@ -1,5 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ThemeSwitch } from "@/components/theme-switch";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Input, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { FaIdCard } from "react-icons/fa6";
 import { IoBagHandleSharp } from "react-icons/io5";
@@ -8,15 +10,13 @@ import { FaCaretDown } from "react-icons/fa";
 import { SearchIcon } from "@/components/searchIcon";
 import ApiContent from "@/components/apiContent";
 import SellingsTable from "@/components/sellingsTable";
-import { useRouter } from "next/navigation";
-import { ThemeSwitch } from "@/components/theme-switch";
 import { Customer } from "../api/customers/route";
 import { Product } from "../api/products/route";
 import { Order } from "../api/orders/route";
 
 export default function HomePage() {
   const keys = [{ icon: <FaIdCard />, content: "Customers" }, { icon: <IoBagHandleSharp />, content: "Products" }, { icon: <MdOutlinePayments />, content: "Orders" }];
-  const [selectedKeys, setSelectedKeys] = useState(new Set(["Select"]));
+  const [selectedKeys, setSelectedKeys] = useState(new Set(["Manage"]));
   const [value, setValue] = useState("")
   const [filter, setFilter] = useState("")
   const router = useRouter();

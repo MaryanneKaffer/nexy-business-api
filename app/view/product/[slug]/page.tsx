@@ -17,6 +17,7 @@ export default function ViewPage() {
     const [ordersData, setOrdersData] = useState<Order[]>([]);
     const [deleted, setDeleted] = useState("")
     const router = useRouter();
+    const [loaded, setLoaded] = useState(false)
 
     useEffect(() => {
         async function fetchData() {
@@ -32,6 +33,7 @@ export default function ViewPage() {
             setOrdersData(dataO)
         }
         fetchData();
+        setLoaded(true);
     }, [id]);
 
     const totalSellings = () => {
@@ -56,8 +58,11 @@ export default function ViewPage() {
     };
 
     return (
-        <div className="sm:p-8 p-5 mx-auto h-full lg:w-[40%] w-full dark:bg-[#18181B] bg-[#D4D4D8] gap-3 rounded-sm relative">
+        <div className="sm:p-8 p-5 mx-auto lg:w-[40%] w-full dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm relative min-h-[400px]">
             <HomeButton />
+            {!loaded &&
+                <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />
+            }
             {data && (
                 <div className="h-full flex flex-col sm:gap-3 gap-2">
                     <span>
@@ -66,14 +71,14 @@ export default function ViewPage() {
                     </span>
                     <div className={`grid grid-cols-2 sm:gap-3 gap-2`}>
                         {Object.entries(data).filter(([key, _]) => key !== "id").map(([key, value]) => (
-                            <Input key={key} label={key.toUpperCase()} readOnly radius="sm" className="sm:h-14 h-12"
+                            <Input key={key} label={key.toUpperCase()} readOnly radius="sm" className="sm:h-14 h-12" classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }}
                                 value={String(value)}
                             />
                         ))}
                     </div>
-                    <Input readOnly radius="sm" label="TOTAL SOLD" value={String(totalSellings())} className="sm:h-14 h-12" />
-                    <Input readOnly radius="sm" label="TOTAL REVENUE" value={String(totalRevenue())} className="sm:h-14 h-12" />
-                    <span className="flex gap-3 w-full mt-auto">
+                    <Input readOnly radius="sm" label="TOTAL SOLD" value={String(totalSellings())} className="sm:h-14 h-12" classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }} />
+                    <Input readOnly radius="sm" label="TOTAL REVENUE" value={String(totalRevenue())} className="sm:h-14 h-12" classNames={{ inputWrapper: "dark:bg-[#1F1F21]" }} />
+                    <span className="flex gap-3 w-full">
                         <Button radius="sm" color="primary" className="sm:h-12 sm:mt-0 mt-2 h-9 w-full" onPress={() => router.push(`/edit/product/${id}`)}>Edit</Button>
                         <DeleteButton name={data.name} item="products" id={id} setDeleted={setDeleted} />
                     </span>
