@@ -178,7 +178,7 @@ export default function NewOrder() {
                                     <h1 className="sm:text-2xl text-xl text-center mx-auto">Select a customer</h1>
                                 </span>
                                 <Controller name="customerId" control={control} render={({ field }) => (
-                                    <Autocomplete variant="bordered" classNames={{ base: "dark:bg-[#1F1F21] rounded-xl" }}
+                                    <Autocomplete variant="bordered" classNames={{ base: "dark:bg-[#1F1F21] bg-default rounded-xl" }}
                                         className="sm:h-14 h-12"
                                         {...field}
                                         radius="sm"
