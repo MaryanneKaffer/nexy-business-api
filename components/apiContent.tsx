@@ -33,7 +33,7 @@ export default function ApiContent({ type, filter, orders, products, customers }
     return (
         <div className="w-full h-full overflow-y-scroll scroll-hidden dark:bg-[#27272A] bg-[#D4D4D8] rounded-lg lg:px-6 lg:py-3 md:p-4.5 p-3">
             <div className="flex flex-col gap-2">
-                <p className="ml-auto">{getCount() + " " + type}</p>
+                {["customers","products","orders"].includes(type) && <p className="ml-auto">{getCount() + " " + type}</p>}
                 {type === "customers" && customers && customers.length > 0 ? (filter ? customers.filter((c: Customer) => (c.corporateName.includes(filter))) : customers).map((item) => (
                     <Cards key={item.id} title={item.corporateName} id={String(item.id)} content1={item.email} content2={item.ssn}
                         rightContent1={`Orders: ${orders.filter(o => Number(o.customerId) === item.id)?.length ?? 0}`} type="customer" />

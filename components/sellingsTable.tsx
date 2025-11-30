@@ -60,7 +60,7 @@ export default function SellingsTable({ orders, products, customers }: { orders:
     ]
 
     const hasAnyContent = content.some(item => {
-        item.value.some(v => !v.includes("0.00"))
+        return item.value.some(v => !v.includes("0.00"));
     });
 
     setTimeout(() => {
@@ -70,11 +70,11 @@ export default function SellingsTable({ orders, products, customers }: { orders:
     return (
         <>
             {mobile &&
-                <Button className="h-12 w-full dark:bg-[#27272A] bg-[#D4D4D8] justify-start" radius="sm" onPress={() => setOpen(!isOpen)}>
+                <Button className={`h-12 w-full dark:bg-[#27272A] bg-[#D4D4D8] justify-start ${isOpen && "bg-white sm:border-none border-1 border-gray-400 border-b-transparent"}`} radius="sm" onPress={() => setOpen(!isOpen)}>
                     {isOpen ? "Close sellings" : "Open sellings"}
                 </Button>
             }
-            <div className={`xl:w-[305px] sm:gap-3 gap-1 z-10 sm:static absolute top-9 transition-all flex flex-col sm:w-[30%] sm:h-full dark:bg-[#27272A] bg-default sm:bg-[#D4D4D8] sm:rounded-lg rounded-b-lg xl:p-5 p-3
+            <div className={`xl:w-[305px] sm:gap-3 gap-1 z-10 sm:static absolute top-9 transition-all flex flex-col sm:w-[30%] sm:h-full dark:bg-[#27272A] bg-white sm:border-none border-1 border-gray-400 border-t-transparent sm:bg-[#D4D4D8] sm:rounded-lg rounded-b-lg xl:p-5 p-3
              ${mobile ? (isOpen ? "opacity-100 w-full" : "max-h-0 opacity-0") : "opacity-100"}`}>
                 {!loaded ?
                     <Button isLoading size="lg" className="w-full bg-transparent transition-all duration-700" />
@@ -87,9 +87,9 @@ export default function SellingsTable({ orders, products, customers }: { orders:
                         {content.map((item, index) => (
                             <span key={item.name + index}>
                                 {!item.value[0]?.includes("0.00") && (<>
-                                    <p className="dark:text-blue-400 text-blue-500 xl:text-xl sm:text-lg text-[14px] leading-tight">{item.name}</p>
+                                    <p className="dark:text-blue-400 text-blue-500 xl:text-xl sm:text-lg text-[16px] leading-tight">{item.name}</p>
                                     {item.value.map((value, i) => (
-                                        <p key={i} className="dark:text-gray-300 ml-1 sm:my-1 xl:text-[16px] sm:text-sm text-[12px] leading-tight">{!value.includes("0.00") && String(value)}</p>
+                                        <p key={i} className="dark:text-gray-300 ml-1 sm:my-1 xl:text-[16px] sm:text-sm text-[14px] leading-tight">{!value.includes("0.00") && String(value)}</p>
                                     ))}
                                 </>)}
                             </span>

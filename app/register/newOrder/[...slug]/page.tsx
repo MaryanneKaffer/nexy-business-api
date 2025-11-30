@@ -167,10 +167,10 @@ export default function NewOrder() {
 
     return (
         <>
-            <section className="h-full w-full">
-                <form onSubmit={handleSubmit(onSubmit, onError)} className="h-full w-full flex lg:flex-row flex-col gap-2 justify-between">
-                    <div className={`lg:w-[35dvw] sm:px-8 sm:py-6 p-5 dark:bg-default/60 bg-[#D4D4D8] md:gap-4 gap-2 rounded-sm flex flex-col transition-all duration-300 ${selectedCustomer ? "lg:h-full md:h-[105dvh] h-[80dvh]" : "md:h-44 h-32"}`}>
-                        {!loaded ?
+            <section className="h-[190dvh] w-full">
+                <form onSubmit={handleSubmit(onSubmit, onError)} className="h-full w-full flex lg:flex-row flex-col gap-2 lg:justify-between">
+                    <div className={`lg:w-[35dvw] sm:px-8 sm:py-6 p-3 dark:bg-default/60 bg-[#D4D4D8] md:gap-4 gap-2 rounded-sm flex flex-col transition-all duration-300 ${selectedCustomer ? "lg:h-[86.6dvh] md:h-[115dvh] h-[90dvh]" : "md:h-44 h-32"}`}>
+                        {loaded !== true ?
                             <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />
                             : <>
                                 <span className="flex relative items-center w-full">
@@ -231,11 +231,11 @@ export default function NewOrder() {
                             </>}
                     </div>
                     {loaded && (
-                        <div className="sm:px-8 sm:py-6 p-5 lg:w-[62%] dark:bg-default/60 bg-[#D4D4D8] lg:h-[86.6dvh] rounded-sm overflow-y-scroll">
+                        <div className="sm:px-8 sm:py-6 p-3 lg:w-[62%] dark:bg-default/60 bg-[#D4D4D8] lg:h-[86.6dvh] rounded-sm overflow-y-scroll md:h-[70dvh] h-[95dvh]">
                             <h1 className="sm:text-2xl text-xl text-center mb-3">Products</h1>
                             <span className="grid md:grid-cols-2 grid-cols-1 gap-2">
                                 {selectedProducts.map((product, index) => (
-                                    <div key={index} className={`dark:bg-[#1F1F21] bg-[#E4E4E7] transition-all md:h-[365px] h-[325px] duration-200 ${index === 2 || index === 3 && "lg:mb-6"} rounded-sm p-5 flex flex-col gap-3`}>
+                                    <div key={index} className={`dark:bg-[#1F1F21] bg-[#E4E4E7] transition-all md:h-[365px] h-[325px] duration-200 ${index === 2 || index === 3 && "lg:mb-6"} rounded-sm sm:p-5 p-3 flex flex-col gap-3`}>
                                         <Controller name={`products.${index}.productId`} control={control} rules={index === 0 ? { required: "at least 1 product" } : {}} render={({ field }) => (
                                             <Autocomplete
                                                 {...field}

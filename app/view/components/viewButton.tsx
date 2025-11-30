@@ -8,6 +8,6 @@ export default function ViewButton({ id, type }: { id: number, type: string }) {
         router.push(`/view/${type.replace(/s$/, "")}/${id}`)
     }
     return (
-        <Button className="ml-auto md:w-[140px] sm:h-12 h-9 w-fit group-hover:opacity-100 opacity-0 transition-all duration-200" radius="sm" onPress={() => handleView()}>View</Button>
+        <Button className="ml-auto md:w-[140px] sm:h-12 h-9 w-fit sm:group-hover:opacity-100 sm:opacity-0 transition-all duration-200" radius="sm" onPress={() => handleView()}>View</Button>
     )
 }
