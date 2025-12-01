@@ -33,7 +33,9 @@ export default function ViewPage() {
             setOrdersData(dataO)
         }
         fetchData();
-        setLoaded(true);
+        setTimeout(() => {
+            setLoaded(true);
+        }, 1000);
     }, [id]);
 
     const totalSellings = () => {
@@ -58,7 +60,7 @@ export default function ViewPage() {
     };
 
     return (
-        <div className="sm:p-8 p-5 mx-auto lg:w-[40%] w-full dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm relative min-h-[400px]">
+        <div className="sm:p-5 p-3 mx-auto lg:w-[40%] w-full dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm relative min-h-[300px]">
             <HomeButton />
             {!loaded &&
                 <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />

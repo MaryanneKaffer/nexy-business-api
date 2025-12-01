@@ -80,7 +80,7 @@ export default function HomePage() {
           </span>
           <Popover placement="bottom">
             <PopoverTrigger>
-              <Button disabled={selectedValue === "Select"} radius="sm" className="gap-1 px-5 sm:min-w-[45px] sm:w-[74px] w-full sm:h-12 sm:text-[16px]" color="primary">
+              <Button disabled={selectedValue === "Manage"} radius="sm" className={`gap-1 px-5 sm:min-w-[45px] sm:w-[74px] w-full sm:h-12 sm:text-[16px] ${selectedValue === "Manage" && "brightness-60 bg-gray-300 cursor-default"}`} color="primary">
                 New
               </Button>
             </PopoverTrigger>

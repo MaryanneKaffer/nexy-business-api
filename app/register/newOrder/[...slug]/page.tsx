@@ -41,7 +41,9 @@ export default function NewOrder() {
             setProducts(data2)
         }
         fetchData();
-        setLoaded(true);
+        setTimeout(() => {
+            setLoaded(true);
+        }, 1500);
     }, []);
 
     async function onSubmit(formData: any) {
@@ -170,7 +172,7 @@ export default function NewOrder() {
             <section className="h-[190dvh] w-full">
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="h-full w-full flex lg:flex-row flex-col gap-2 lg:justify-between">
                     <div className={`lg:w-[35dvw] sm:px-8 sm:py-6 p-3 dark:bg-default/60 bg-[#D4D4D8] md:gap-4 gap-2 rounded-sm flex flex-col transition-all duration-300 ${selectedCustomer ? "lg:h-[86.6dvh] md:h-[115dvh] h-[90dvh]" : "md:h-44 h-32"}`}>
-                        {loaded !== true ?
+                        {!loaded ?
                             <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />
                             : <>
                                 <span className="flex relative items-center w-full">
@@ -283,7 +285,7 @@ export default function NewOrder() {
             )}
 
             {registerLoad && (
-                <span className="w-[100dvw] h-[100dvh] absolute top-0 left-0 z-100 bg-default/70">
+                <span className="w-[100dvw] h-[100dvh] fixed top-0 left-0 z-100 bg-default/70">
                     <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />
                 </span>
             )}

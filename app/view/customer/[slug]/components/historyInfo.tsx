@@ -9,10 +9,10 @@ interface ProductTotals {
 
 export default function HistoryInfo({ productTotal, products, data }: { productTotal: ProductTotals, products: Product[], data?: Customer }) {
     return (
-        <div className="p-5 mx-auto lg:w-[60%] w-full lg:h-[86dvh] h-[140dvh] dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm flex flex-col">
-            <div className="dark:bg-[#202022] bg-[#E4E4E7] sm:gap-3 gap-2 rounded-sm flex flex-col p-5 h-[49%] overflow-y-scroll">
+        <div className="sm:p-5 p-3 mx-auto lg:w-[60%] w-full lg:h-[86dvh] h-[90dvh] dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm flex flex-col mb-3 sm:mb-0">
+            <div className="dark:bg-[#202022] bg-[#E4E4E7] sm:gap-3 gap-2 rounded-sm flex flex-col sm:p-5 p-3 h-[49%] overflow-y-scroll">
                 <span className="flex justify-between">
-                    <h1 className="sm:text-xl w-[75%]">Orders from {data?.corporateName}</h1>
+                    <h1 className="sm:text-xl w-[75%]">Orders</h1>
                     <h1 className="sm:text-xl text-gray-500">Total: {data?.orders?.length ?? 0}</h1>
                 </span>
                 <div className="flex flex-col gap-3">
@@ -21,15 +21,20 @@ export default function HistoryInfo({ productTotal, products, data }: { productT
                     ))}
                 </div>
             </div>
-            <div className="dark:bg-[#1F1F21] bg-[#E4E4E7] gap-3 rounded-sm flex flex-col p-5 h-[49%] overflow-y-scroll">
+            <div className="dark:bg-[#1F1F21] bg-[#E4E4E7] gap-3 rounded-sm flex flex-col sm:p-5 p-3 h-[49%] overflow-y-scroll">
                 <span className="flex justify-between">
-                    <h1 className="sm:text-xl w-[75%]">Most bought products from {data?.corporateName}</h1>
+                    <h1 className="sm:text-xl w-[75%]">Most bought products</h1>
                     <h1 className="sm:text-xl text-gray-500">Total: {products.length}</h1>
                 </span>
                 <div className="flex flex-col gap-3">
                     {products && products.map((item) => (
-                        <Cards key={item.id} title={item.name} id={`${item.id} | included in ${data?.orders.filter((order: Order) => order.items.some(i => Number(i.productId) === item.id)).length} orders`} content1={item.description ?? ""}
-                            content2={String(item.size)} rightContent1={`Total: ${productTotal[item.id].total.toFixed(2)}`} rightContent2={`Quantity: ${productTotal[item.id].quantity}`} type="product" />
+                        <Cards key={item.id} title={item.name}
+                            id={`${item.id} ${window.innerWidth > 790 ? `| included in ${data?.orders.filter((order: Order) => order.items.some(i => Number(i.productId) === item.id)).length} orders` : ""} `}
+                            content1={item.description ?? ""}
+                            content2={String(item.size)}
+                            rightContent1={`Total: ${productTotal[item.id].total.toFixed(2)}`}
+                            rightContent2={window.innerWidth > 790 ? `Quantity: ${productTotal[item.id].quantity}` : ""}
+                            type="product" />
                     ))}
                 </div>
             </div>

@@ -37,7 +37,7 @@ export default function ViewPage() {
 
     return (
         <section className="flex gap-2 lg:flex-row flex-col">
-            <div className="sm:p-8 p-5 mx-auto lg:w-[40%] w-full dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm flex min-h-[200px]">
+            <div className="sm:p-5 p-3 mx-auto lg:w-[40%] w-full dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm flex min-h-[200px]">
                 <HomeButton />
                 {!loaded &&
                     <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />

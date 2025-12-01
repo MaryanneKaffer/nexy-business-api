@@ -77,12 +77,14 @@ export default function ViewCustomer() {
             setProductTotal(totals);
         }
         fetchData();
-        setLoaded(true);
+        setTimeout(() => {
+            setLoaded(true);
+        }, 1500);
     }, [id]);
 
     return (
         <section className="flex lg:flex-row flex-col gap-2 relative">
-            <div className="sm:p-8 p-5 mx-auto lg:w-[40%] w-full dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm relative flex-1">
+            <div className="sm:p-8 p-3 mx-auto lg:w-[40%] w-full dark:bg-default/60 bg-[#D4D4D8] gap-3 rounded-sm relative flex-1">
                 <HomeButton />
                 {!loaded &&
                     <Button isLoading size="lg" className="w-full h-full bg-transparent transition-all duration-700" />
